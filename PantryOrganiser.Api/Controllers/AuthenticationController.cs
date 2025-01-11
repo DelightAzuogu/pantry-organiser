@@ -1,9 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity.Data;
 using Microsoft.AspNetCore.Mvc;
 using PantryOrganiser.Service.Interfaces;
-using PantryOrganiser.Shared.Constants;
 using PantryOrganiser.Shared.Exceptions;
-using LoginRequest = PantryOrganiser.Shared.Dto.Request.LoginRequest;
 
 namespace PantryOrganiser.Api.Controllers;
 
@@ -36,7 +34,7 @@ public class AuthenticationController(ILogger<AuthenticationController> logger, 
             return StatusCode(StatusCodes.Status500InternalServerError);
         }
     }
-    
+
     [HttpPost("register")]
     public async Task<IActionResult> Register([FromBody] RegisterRequest request)
     {

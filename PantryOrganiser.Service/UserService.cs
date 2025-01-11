@@ -6,7 +6,6 @@ using PantryOrganiser.Service.Interfaces;
 using PantryOrganiser.Shared.Constants;
 using PantryOrganiser.Shared.Dto.Response;
 using PantryOrganiser.Shared.Exceptions;
-using LoginRequest = PantryOrganiser.Shared.Dto.Request.LoginRequest;
 
 namespace PantryOrganiser.Service;
 

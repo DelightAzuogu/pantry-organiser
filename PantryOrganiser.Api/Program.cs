@@ -1,17 +1,6 @@
-using System.Text;
 using AspNetCore.AsyncInitialization;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
-using Microsoft.OpenApi.Models;
-using PantryOrganiser.DataAccess;
-using PantryOrganiser.DataAccess.Repository;
-using PantryOrganiser.Domain.Helpers;
-using PantryOrganiser.Domain.Interface;
-using PantryOrganiser.Service;
-using PantryOrganiser.Service.Interfaces;
+using PantryOrganiser.Api.Extensions;
 using PantryOrganiser.Shared.Constants;
-using PantryOrganiser.Shared.Settings;
 
 namespace PantryOrganiser.Api;
 
@@ -26,109 +15,9 @@ public class Program
             .AddJsonFile($"appsettings.{Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT")}.json", true)
             .AddJsonFile("appsettings.Local.json", true)
             .Build();
-        
-        // Add AppSettings Objects
-        builder.Services.Configure<WebProtocolSettings>(builder.Configuration.GetSection("WebProtocolSettings"));
-
-        // Get protocol settings
-        var protocols = new WebProtocolSettings();
-        config.GetSection("WebProtocolSettings").Bind(protocols);
 
         // Add services to the container
-        builder.Services.AddControllers();
-        builder.Services.AddControllersWithViews();
-
-        // Add Swagger configuration
-        builder.Services.AddEndpointsApiExplorer();
-        builder.Services.AddSwaggerGen(c =>
-        {
-            c.SwaggerDoc("v1", new OpenApiInfo
-            {
-                Title = "Pantry Organiser API",
-                Version = "v1",
-                Description = "API for managing pantry organization"
-            });
-
-            // Add JWT Authentication
-            c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
-            {
-                Description = "JWT Authorization header using the Bearer scheme. Enter 'Bearer' [space] and then your token in the text input below.",
-                Name = "Authorization",
-                In = ParameterLocation.Header,
-                Type = SecuritySchemeType.ApiKey,
-                Scheme = "Bearer"
-            });
-
-            c.AddSecurityRequirement(new OpenApiSecurityRequirement
-            {
-                {
-                    new OpenApiSecurityScheme
-                    {
-                        Reference = new OpenApiReference
-                        {
-                            Type = ReferenceType.SecurityScheme,
-                            Id = "Bearer"
-                        }
-                    },
-                    Array.Empty<string>()
-                }
-            });
-        });
-
-        // Database and other services
-        builder.Services.AddDbContext<AppDbContext>(options =>
-            options.UseSqlServer(builder.Configuration.GetConnectionString("ApplicationDbContext")));
-        builder.Services.AddScoped<IAsyncInitializer, Initializer>();
-
-        // adding repository
-        builder.Services.AddTransient(typeof(IBaseRepository<>), typeof(BaseRepository<>));
-        builder.Services.AddScoped<IUserRepository, UserRepository>();
-
-        // adding services
-        builder.Services.AddScoped<IUserService, UserService>();
-
-        //add helpers 
-        builder.Services.AddSingleton<IJwtHelper, JwtHelper>();
-        builder.Services.AddSingleton<IHashHelper, HashHelper>();
-
-        // Configure Authentication
-        builder.Services.AddAuthentication(x =>
-            {
-                x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-            })
-            .AddJwtBearer(AuthorisationPolicies.JwtBearers, x =>
-            {
-                x.TokenValidationParameters = new TokenValidationParameters
-                {
-                    ValidateIssuerSigningKey = true,
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(protocols.EncryptionKey)),
-                    ValidateIssuer = false,
-                    ValidateAudience = false,
-                    ValidateLifetime = true,
-                    ClockSkew = TimeSpan.Zero
-                };
-            });
-
-        builder.Services.AddAuthorization(options =>
-        {
-            options.AddPolicy(AuthorisationPolicies.Users, policy =>
-            {
-                policy.RequireClaim(AuthorisationClaims.FromApplication, protocols.FromApplicationString)
-                    .AddAuthenticationSchemes(AuthorisationPolicies.JwtBearers);
-            });
-        });
-
-        // Configure CORS
-        builder.Services.AddCors(options =>
-        {
-            options.AddPolicy(CorsPolicy.AllowSitesFromAppSettings, x =>
-            {
-                x.AllowAnyOrigin()
-                    .AllowAnyHeader()
-                    .AllowAnyMethod();
-            });
-        });
+        builder.Services.AddApplicationServices(builder.Configuration);
 
         var app = builder.Build();
 
@@ -148,13 +37,10 @@ public class Program
         }
 
         app.UseHttpsRedirection();
-
         app.UseRouting();
         app.UseCors(CorsPolicy.AllowSitesFromAppSettings);
-
         app.UseAuthentication();
         app.UseAuthorization();
-
         app.MapControllers();
 
         await app.RunAsync();
