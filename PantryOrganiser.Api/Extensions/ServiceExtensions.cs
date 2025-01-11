@@ -35,7 +35,7 @@ public static class ServiceExtensions
 
         // Add Swagger
         services.AddSwagger();
-        
+
         // Add Database
         services.AddDbContext<AppDbContext>(options =>
             options.UseSqlServer(configuration.GetConnectionString("ApplicationDbContext")));
@@ -63,7 +63,7 @@ public static class ServiceExtensions
         services.AddHttpContextAccessor();
         services.AddScoped<IUserContext, UserContext>((Func<IServiceProvider, UserContext>)(c =>
         {
-            UserContext userContext = GetUserContextFromClaims(c.GetService<IHttpContextAccessor>().HttpContext?.User);
+            var userContext = GetUserContextFromClaims(c.GetService<IHttpContextAccessor>().HttpContext?.User);
             return userContext;
         }));
     }
@@ -136,13 +136,16 @@ public static class ServiceExtensions
         services.AddScoped<IPantryItemRepository, PantryItemRepository>();
         services.AddScoped<IShoppingBasketRepository, ShoppingBasketRepository>();
         services.AddScoped<IShoppingBasketItemRepository, ShoppingBasketItemRepository>();
-        
+
         services.AddScoped<IAsyncInitializer, Initializer>();
     }
 
     private static void AddBusinessServices(this IServiceCollection services)
     {
         services.AddScoped<IUserService, UserService>();
+        services.AddScoped<IPantryService, PantryService>();
+        services.AddScoped<IPantryItemService, PantryItemService>();
+
         services.AddSingleton<IJwtHelper, JwtHelper>();
         services.AddSingleton<IHashHelper, HashHelper>();
     }

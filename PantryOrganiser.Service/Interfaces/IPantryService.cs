@@ -10,6 +10,8 @@ public interface IPantryService
     Task<List<PantryDto>> GetPantriesByUserIdAsync(Guid userId);
 
     Task ValidatePantryExistenceByIdAsync(Guid pantryId);
+    
+    public Task ValidatePantryOwnershipAsync(Guid pantryId, Guid userId);
 
     Task DeletePantryByIdAsync(Guid pantryId, Guid userId);
 

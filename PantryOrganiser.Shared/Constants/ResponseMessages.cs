@@ -7,4 +7,6 @@ public static class ResponseMessages
     public const string InvalidPassword = "Invalid password";
     public const string PantryNotFound = "Pantry not found";
     public const string PantryDoesNotBelongToUser = "Pantry does not belong to user";
+    public const string PantryItemNotFound = "Pantry item not found";
+    public const string PantryItemDoesNotBelongToUser = "Pantry item does not belong to user";
 }
