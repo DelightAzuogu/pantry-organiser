@@ -8,6 +8,8 @@ public class UserRepository(AppDbContext dbContext) : BaseRepository<User>(dbCon
 {
     public Task<User> GetUserByEmailAsync(string email) => Query(x => x.Email == email).FirstOrDefaultAsync();
     
+    public Task<bool> UserWithIdExistsAsync(Guid id) => AnyAsync(x => x.Id == id);
+
     public Task<bool> UserWithEmailExistsAsync(string email) => AnyAsync(x=> x.Email == email);
     
     public Task AddUserAsync(User user) => AddAsync(user);

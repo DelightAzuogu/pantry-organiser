@@ -72,4 +72,14 @@ public class UserService(ILogger<UserService> logger, IUserRepository userReposi
             Token = token
         };
     }
+    
+    public async Task ValidateUserExistenceByIdAsync(Guid userId)
+    {
+        logger.LogInformation("Checking if user with id {Id} exists.", userId);
+        if (!await userRepository.UserWithIdExistsAsync(userId))
+        {
+            logger.LogError($"User with id {userId} not found.");
+            throw new UserNotFoundException(ResponseMessages.UserNotFound);
+        }
+    }
 }

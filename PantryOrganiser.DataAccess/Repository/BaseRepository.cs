@@ -101,6 +101,29 @@ public class BaseRepository<TEntity>(AppDbContext dbContext) : IBaseRepository<T
         }
     }
 
+    public async Task DeleteRangeAsync(IEnumerable<TEntity> entities)
+    {
+        if (entities == null) throw new ArgumentNullException(nameof(entities), "Entities collection cannot be null when deleting range.");
+
+        if (!entities.Any()) throw new ArgumentException("Entities collection cannot be empty when deleting range.", nameof(entities));
+
+        try
+        {
+            var now = DateTime.UtcNow;
+
+            foreach (var entity in entities)
+            {
+                entity.DeletedAt = now;
+            }
+
+            await _context.SaveChangesAsync();
+        }
+        catch (Exception ex)
+        {
+            throw new InvalidOperationException($"Failed to delete range of entities of type {typeof(TEntity).Name}. Error: {ex.Message}", ex);
+        }
+    }
+
     public IQueryable<TEntity> Query(Expression<Func<TEntity, bool>> expression) => _context.Set<TEntity>().Where(e => e.DeletedAt == null).Where(expression);
 
     public Task<bool> AnyAsync(Expression<Func<TEntity, bool>> expression) => _context.Set<TEntity>().Where(e => e.DeletedAt == null).AnyAsync(expression);

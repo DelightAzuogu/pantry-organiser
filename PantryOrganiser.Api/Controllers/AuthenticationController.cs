@@ -6,7 +6,7 @@ using PantryOrganiser.Shared.Exceptions;
 namespace PantryOrganiser.Api.Controllers;
 
 [ApiController]
-[Route("[controller]")]
+[Route("api/auth")]
 public class AuthenticationController(ILogger<AuthenticationController> logger, IUserService userService) : ControllerBase
 {
     [HttpPost("login")]

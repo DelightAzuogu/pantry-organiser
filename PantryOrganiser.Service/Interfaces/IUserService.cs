@@ -8,4 +8,6 @@ public interface IUserService
     public Task<LoginResponse> LoginAsync(LoginRequest request);
 
     public Task<LoginResponse> RegisterAsync(RegisterRequest request);
+
+    public Task ValidateUserExistenceByIdAsync(Guid userId);
 }

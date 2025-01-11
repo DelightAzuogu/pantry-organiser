@@ -132,6 +132,11 @@ public static class ServiceExtensions
     {
         services.AddTransient(typeof(IBaseRepository<>), typeof(BaseRepository<>));
         services.AddScoped<IUserRepository, UserRepository>();
+        services.AddScoped<IPantryRepository, PantryRepository>();
+        services.AddScoped<IPantryItemRepository, PantryItemRepository>();
+        services.AddScoped<IShoppingBasketRepository, ShoppingBasketRepository>();
+        services.AddScoped<IShoppingBasketItemRepository, ShoppingBasketItemRepository>();
+        
         services.AddScoped<IAsyncInitializer, Initializer>();
     }
 

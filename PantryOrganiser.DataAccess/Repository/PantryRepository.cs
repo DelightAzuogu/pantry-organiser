@@ -1,0 +1,29 @@
+﻿using Microsoft.EntityFrameworkCore;
+using PantryOrganiser.Domain.Entity;
+using PantryOrganiser.Domain.Interface;
+using PantryOrganiser.Shared.Dto.Response;
+
+namespace PantryOrganiser.DataAccess.Repository;
+
+public class PantryRepository(AppDbContext dbContext) : BaseRepository<Pantry>(dbContext), IPantryRepository
+{
+    public Task CreatePantryAsync(Pantry pantry) => AddAsync(pantry);
+
+    public Task<List<PantryDto>> GetPantriesByUserIdAsync(Guid userId) =>
+        Query(x => x.UserId == userId)
+            .Select(x => new PantryDto
+            {
+                Name = x.Name
+            }).ToListAsync();
+
+    public async Task DeletePantryAsync(Guid pantryId)
+    {
+        var pantry = await Query(x => x.Id == pantryId).SingleAsync();
+
+        await DeleteAsync(pantry);
+    }
+
+    public Task<bool> PantryWithIdExistAsync(Guid pantryId) => AnyAsync(x => x.Id == pantryId);
+
+    public Task<Pantry> GetPantryByIdAsync(Guid pantryId) => Query(x => x.Id == pantryId).FirstOrDefaultAsync();
+}
