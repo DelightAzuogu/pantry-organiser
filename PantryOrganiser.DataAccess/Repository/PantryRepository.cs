@@ -26,4 +26,13 @@ public class PantryRepository(AppDbContext dbContext) : BaseRepository<Pantry>(d
     public Task<bool> PantryWithIdExistAsync(Guid pantryId) => AnyAsync(x => x.Id == pantryId);
 
     public Task<Pantry> GetPantryByIdAsync(Guid pantryId) => Query(x => x.Id == pantryId).FirstOrDefaultAsync();
+
+    public async Task UpdatePantryAsync(Guid pantryId, string name)
+    {
+        var pantry = await Query(x => x.Id == pantryId).SingleAsync();
+
+        pantry.Name = name;
+
+        await UpdateAsync(pantry);
+    }
 }

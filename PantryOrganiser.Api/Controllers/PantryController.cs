@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using PantryOrganiser.Domain.Interface;
 using PantryOrganiser.Service.Interfaces;
 using PantryOrganiser.Shared.Constants;
+using PantryOrganiser.Shared.Dto.Request;
 using PantryOrganiser.Shared.Exceptions;
 
 namespace PantryOrganiser.Api.Controllers;
@@ -52,6 +53,43 @@ public class PantryController(ILogger<PantryController> logger, IUserContext use
         catch (Exception e)
         {
             logger.LogError(e, "Error occurred while getting user pantries");
+            return StatusCode(StatusCodes.Status500InternalServerError);
+        }
+    }
+
+    [HttpPost("{pantryId:guid}/update")]
+    public async Task<IActionResult> UpdatePantry([FromRoute] Guid pantryId, [FromBody] string name)
+    {
+        try
+        {
+            logger.LogInformation("Updating pantry with id: {PantryId} by user {user}", pantryId, userContext.UserId);
+
+            await pantryService.UpdatePantryAsync(new UpdatePantryRequest
+            {
+                Name = name,
+                PantryId = pantryId
+            }, userContext.UserId);
+
+            return Ok();
+        }
+        catch (UserNotFoundException e)
+        {
+            logger.LogError(e, "User not found: {UserId}", userContext.UserId);
+            return NotFound(ResponseMessages.UserNotFound);
+        }
+        catch (PantryNotFoundException e)
+        {
+            logger.LogError(e, "Pantry not found: {PantryId}", pantryId);
+            return NotFound(ResponseMessages.PantryNotFound);
+        }
+        catch (PantryOwnershipException e)
+        {
+            logger.LogError(e, "Pantry {PantryId} does not belong to user {UserId}", pantryId, userContext.UserId);
+            return StatusCode(StatusCodes.Status403Forbidden, ResponseMessages.PantryDoesNotBelongToUser);
+        }
+        catch (Exception e)
+        {
+            logger.LogError(e, "Error occurred while updating pantry");
             return StatusCode(StatusCodes.Status500InternalServerError);
         }
     }

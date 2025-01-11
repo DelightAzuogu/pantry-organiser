@@ -5,13 +5,15 @@ namespace PantryOrganiser.Domain.Interface;
 
 public interface IPantryRepository
 {
-    public Task CreatePantryAsync(Pantry pantry);
+    Task CreatePantryAsync(Pantry pantry);
 
-    public Task<List<PantryDto>> GetPantriesByUserIdAsync(Guid userId);
+    Task<List<PantryDto>> GetPantriesByUserIdAsync(Guid userId);
+
+    Task DeletePantryAsync(Guid pantryId);
+
+    Task<bool> PantryWithIdExistAsync(Guid pantryId);
+
+    Task<Pantry> GetPantryByIdAsync(Guid pantryId);
     
-    public Task DeletePantryAsync(Guid pantryId);
-
-    public Task<bool> PantryWithIdExistAsync(Guid pantryId);
-
-    public Task<Pantry> GetPantryByIdAsync(Guid pantryId);
+    Task UpdatePantryAsync(Guid pantryId, string name);
 }
