@@ -4,15 +4,21 @@ using PantryOrganiser.Domain.Interface;
 using PantryOrganiser.Service.Interfaces;
 using PantryOrganiser.Shared.Dto.Request;
 using PantryOrganiser.Shared.Dto.Response;
+using PantryOrganiser.Shared.Enum;
 using PantryOrganiser.Shared.Exceptions;
 
 namespace PantryOrganiser.Service;
 
-public class PantryItemService(ILogger<PantryService> logger, IPantryService pantryService, IPantryItemRepository pantryItemRepository) : IPantryItemService
+public class PantryItemService(
+    ILogger<PantryService> logger,
+    IPantryService pantryService,
+    IPantryItemRepository pantryItemRepository,
+    IPantryUserService pantryUserService
+) : IPantryItemService
 {
-    public async Task<Guid> AddPantryItemAsync(CreatePantryItemRequest request,Guid pantryId, Guid userId)
+    public async Task<Guid> AddPantryItemAsync(CreatePantryItemRequest request, Guid pantryId, Guid userId)
     {
-        await pantryService.ValidatePantryOwnershipAsync(pantryId, userId);
+        await pantryService.ValidateUserPantryRole(userId, pantryId, Role.Add);
 
         logger.LogInformation("Creating pantry item {item}", request.ToString());
         var pantryItem = new PantryItem
@@ -32,7 +38,7 @@ public class PantryItemService(ILogger<PantryService> logger, IPantryService pan
 
     public async Task<PantryItemResponse> GetPantryItemAsync(Guid pantryItemId, Guid userId)
     {
-        await ValidatePantryItemOwnershipAsync(pantryItemId, userId);
+        await pantryUserService.ValidateUserDoesNotExistInPantryAsync(pantryItemId, userId);
 
         logger.LogInformation("Getting pantry item {pantryItemId}", pantryItemId);
 
@@ -51,7 +57,7 @@ public class PantryItemService(ILogger<PantryService> logger, IPantryService pan
 
     public async Task<List<PantryItemResponse>> GetItemsInAPantryAsync(Guid pantryId, Guid userId)
     {
-        await pantryService.ValidatePantryOwnershipAsync(pantryId, userId);
+        await pantryUserService.ValidateUserDoesNotExistInPantryAsync(pantryId, userId);
 
         logger.LogInformation("Getting pantry items for pantry {pantryId}", pantryId);
         var pantryItems = await pantryItemRepository.GetPantryItemsByPantryIdAsync(pantryId);
@@ -69,7 +75,7 @@ public class PantryItemService(ILogger<PantryService> logger, IPantryService pan
 
     public async Task UpdatePantryItemAsync(Guid pantryItemId, UpdatePantryItemRequest request, Guid userId)
     {
-        await ValidatePantryItemOwnershipAsync(pantryItemId, userId);
+        await ValidatePantryItemPantryRoleAsync(pantryItemId, userId, Role.Update);
 
         logger.LogInformation("Updating pantry item {pantryItemId} with {request}", pantryItemId, request.ToString());
 
@@ -78,20 +84,20 @@ public class PantryItemService(ILogger<PantryService> logger, IPantryService pan
 
     public async Task DeletePantryItemAsync(Guid pantryItemId, Guid userId)
     {
-        await ValidatePantryItemOwnershipAsync(pantryItemId, userId);
+        await ValidatePantryItemPantryRoleAsync(pantryItemId, userId, Role.Remove);
 
         logger.LogInformation("Deleting pantry item {pantryItemId}", pantryItemId);
         await pantryItemRepository.DeletePantryItemAsync(pantryItemId);
     }
 
-    public async Task ValidatePantryItemOwnershipAsync(Guid pantryItemId, Guid userId)
+    public async Task ValidatePantryItemPantryRoleAsync(Guid pantryItemId, Guid userId, Role role)
     {
         await ValidatePantryItemExistenceAsync(pantryItemId);
 
         logger.LogInformation("Getting pantry id for pantry item {pantryItemId}", pantryItemId);
         var pantryId = await pantryItemRepository.GetPantryIdByItemIdAsync(pantryItemId);
 
-        await pantryService.ValidatePantryOwnershipAsync(pantryId, userId);
+        await pantryService.ValidateUserPantryRole(userId, pantryId, role);
     }
 
     public async Task ValidatePantryItemExistenceAsync(Guid pantryItemId)

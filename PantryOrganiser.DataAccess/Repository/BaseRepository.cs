@@ -31,6 +31,32 @@ public class BaseRepository<TEntity>(AppDbContext dbContext) : IBaseRepository<T
         }
     }
 
+    public async Task<IEnumerable<TEntity>> AddRangeAsync(IEnumerable<TEntity> entities)
+    {
+        if (entities == null) throw new ArgumentNullException(nameof(entities), "Entities collection cannot be null when adding range.");
+
+        if (!entities.Any()) throw new ArgumentException("Entities collection cannot be empty when adding range.", nameof(entities));
+
+        try
+        {
+            var now = DateTime.UtcNow;
+            foreach (var entity in entities)
+            {
+                entity.CreatedAt = now;
+                entity.UpdatedAt = now;
+            }
+
+            await _context.AddRangeAsync(entities);
+            await _context.SaveChangesAsync();
+
+            return entities;
+        }
+        catch (Exception ex)
+        {
+            throw new InvalidOperationException($"Failed to add range of entities of type {typeof(TEntity).Name}. Error: {ex.Message}", ex);
+        }
+    }
+
     public IQueryable<TEntity> GetAll()
     {
         try

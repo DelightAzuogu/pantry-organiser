@@ -7,8 +7,6 @@ public interface IPantryRepository
 {
     Task CreatePantryAsync(Pantry pantry);
 
-    Task<List<PantryDto>> GetPantriesByUserIdAsync(Guid userId);
-
     Task DeletePantryAsync(Guid pantryId);
 
     Task<bool> PantryWithIdExistAsync(Guid pantryId);
@@ -16,4 +14,6 @@ public interface IPantryRepository
     Task<Pantry> GetPantryByIdAsync(Guid pantryId);
     
     Task UpdatePantryAsync(Guid pantryId, string name);
+    
+    Task<List<PantryDto>> GetPantriesAsync(List<Guid> pantryIds);
 }

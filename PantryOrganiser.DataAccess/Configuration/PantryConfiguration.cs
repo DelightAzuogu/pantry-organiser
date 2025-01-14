@@ -11,12 +11,5 @@ public class PantryConfiguration : IEntityTypeConfiguration<Pantry>
         builder.HasKey(x => x.Id);
 
         builder.Property(x => x.Name).IsRequired();
-
-        builder.HasOne(x => x.User)
-            .WithMany(x => x.Pantries)
-            .HasForeignKey(x => x.UserId)
-            .OnDelete(DeleteBehavior.Restrict);
-
-        builder.HasIndex(x => x.UserId);
     }
 }

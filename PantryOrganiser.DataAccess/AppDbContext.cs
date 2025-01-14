@@ -13,6 +13,10 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
     public DbSet<ShoppingBasket> ShoppingBaskets { get; set; }
 
     public DbSet<PantryItem> PantryItems { get; set; }
+    
+    public DbSet<PantryUser> PantryUsers { get; set; }
+    
+    public DbSet<PantryUserRole> PantryUserRoles { get; set; }
 
     public DbSet<ShoppingBasketItem> ShoppingBasketItems { get; set; }
 

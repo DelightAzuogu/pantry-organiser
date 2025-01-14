@@ -6,6 +6,5 @@ public class Pantry : BaseEntity
     
     public virtual List<PantryItem> PantryItems { get; set; }
     
-    public Guid UserId { get; set; }
-    public virtual User User { get; set; }
+    public virtual List<PantryUser> PantryUsers { get; set; }
 }

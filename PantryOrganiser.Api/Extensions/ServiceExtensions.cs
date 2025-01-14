@@ -107,7 +107,7 @@ public static class ServiceExtensions
                 Description = "JWT Authorization header using the Bearer scheme. Enter 'Bearer' [space] and then your token in the text input below.",
                 Name = "Authorization",
                 In = ParameterLocation.Header,
-                Type = SecuritySchemeType.ApiKey,
+                Type = SecuritySchemeType.Http,
                 Scheme = "Bearer"
             });
 
@@ -116,6 +116,10 @@ public static class ServiceExtensions
                 {
                     new OpenApiSecurityScheme
                     {
+                        Name = "Bearer",
+                        In = ParameterLocation.Header,
+                        Scheme = AuthorisationPolicies.Users,
+                        BearerFormat = "Bearer {token}",
                         Reference = new OpenApiReference
                         {
                             Type = ReferenceType.SecurityScheme,
@@ -136,6 +140,8 @@ public static class ServiceExtensions
         services.AddScoped<IPantryItemRepository, PantryItemRepository>();
         services.AddScoped<IShoppingBasketRepository, ShoppingBasketRepository>();
         services.AddScoped<IShoppingBasketItemRepository, ShoppingBasketItemRepository>();
+        services.AddScoped<IPantryUserRepository, PantryUserRepository>();
+        services.AddScoped<IPantryUserRoleRepository, PantryUserRoleRepository>();
 
         services.AddScoped<IAsyncInitializer, Initializer>();
     }
@@ -145,6 +151,7 @@ public static class ServiceExtensions
         services.AddScoped<IUserService, UserService>();
         services.AddScoped<IPantryService, PantryService>();
         services.AddScoped<IPantryItemService, PantryItemService>();
+        services.AddScoped<IPantryUserService, PantryUserService>();
 
         services.AddSingleton<IJwtHelper, JwtHelper>();
         services.AddSingleton<IHashHelper, HashHelper>();

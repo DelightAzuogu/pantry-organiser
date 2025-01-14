@@ -9,13 +9,6 @@ public class PantryRepository(AppDbContext dbContext) : BaseRepository<Pantry>(d
 {
     public Task CreatePantryAsync(Pantry pantry) => AddAsync(pantry);
 
-    public Task<List<PantryDto>> GetPantriesByUserIdAsync(Guid userId) =>
-        Query(x => x.UserId == userId)
-            .Select(x => new PantryDto
-            {
-                Name = x.Name
-            }).ToListAsync();
-
     public async Task DeletePantryAsync(Guid pantryId)
     {
         var pantry = await Query(x => x.Id == pantryId).SingleAsync();
@@ -35,4 +28,13 @@ public class PantryRepository(AppDbContext dbContext) : BaseRepository<Pantry>(d
 
         await UpdateAsync(pantry);
     }
+
+    public Task<List<PantryDto>> GetPantriesAsync(List<Guid> pantryIds) =>
+        Query(x => pantryIds.Contains(x.Id))
+            .Select(x => new PantryDto
+            {
+                Id = x.Id,
+                Name = x.Name
+            })
+            .ToListAsync();
 }

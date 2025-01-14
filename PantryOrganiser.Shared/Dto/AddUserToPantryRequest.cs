@@ -1,0 +1,12 @@
+﻿using System.Text.Json.Serialization;
+using PantryOrganiser.Shared.Enum;
+
+namespace PantryOrganiser.Shared.Dto;
+
+public class AddUserToPantryRequest
+{
+    public string Email { get; set; }
+
+    [JsonConverter(typeof(JsonStringEnumConverter))]
+    public List<Role> Roles { get; set; }
+}

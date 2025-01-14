@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity.Data;
 using Microsoft.AspNetCore.Mvc;
 using PantryOrganiser.Service.Interfaces;
+using PantryOrganiser.Shared.Dto.Request;
 using PantryOrganiser.Shared.Exceptions;
 
 namespace PantryOrganiser.Api.Controllers;
@@ -10,7 +11,7 @@ namespace PantryOrganiser.Api.Controllers;
 public class AuthenticationController(ILogger<AuthenticationController> logger, IUserService userService) : ControllerBase
 {
     [HttpPost("login")]
-    public async Task<IActionResult> Login([FromBody] LoginRequest request)
+    public async Task<IActionResult> Login([FromBody] LoginRequestDto request)
     {
         try
         {

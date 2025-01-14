@@ -4,6 +4,7 @@ using PantryOrganiser.Domain.Entity;
 using PantryOrganiser.Domain.Interface;
 using PantryOrganiser.Service.Interfaces;
 using PantryOrganiser.Shared.Constants;
+using PantryOrganiser.Shared.Dto.Request;
 using PantryOrganiser.Shared.Dto.Response;
 using PantryOrganiser.Shared.Exceptions;
 
@@ -11,7 +12,7 @@ namespace PantryOrganiser.Service;
 
 public class UserService(ILogger<UserService> logger, IUserRepository userRepository, IHashHelper hashHelper, IJwtHelper jwtHelper) : IUserService
 {
-    public async Task<LoginResponse> LoginAsync(LoginRequest request)
+    public async Task<LoginResponse> LoginAsync(LoginRequestDto request)
     {
         var user = await userRepository.GetUserByEmailAsync(request.Email);
         if (user is null)
@@ -72,7 +73,7 @@ public class UserService(ILogger<UserService> logger, IUserRepository userReposi
             Token = token
         };
     }
-    
+
     public async Task ValidateUserExistenceByIdAsync(Guid userId)
     {
         logger.LogInformation("Checking if user with id {Id} exists.", userId);
@@ -81,5 +82,31 @@ public class UserService(ILogger<UserService> logger, IUserRepository userReposi
             logger.LogError($"User with id {userId} not found.");
             throw new UserNotFoundException(ResponseMessages.UserNotFound);
         }
+    }
+
+    public async Task ValidateUserExistenceByEmailAsync(string email)
+    {
+        logger.LogInformation("Checking if user with email {email} exists.", email);
+        if (!await userRepository.UserWithEmailExistsAsync(email))
+        {
+            logger.LogError($"User with email {email} not found.");
+            throw new UserNotFoundException(ResponseMessages.UserNotFound);
+        }
+    }
+    
+    public async Task<User> GetUserByEmailAsync(string email)
+    {
+        await ValidateUserExistenceByEmailAsync(email);
+        
+        logger.LogInformation("Getting user with email {email}.", email);
+        return await userRepository.GetUserByEmailAsync(email);
+    }
+    
+    public async Task<User> GetUserByIdAsync(Guid userId)
+    {
+        await ValidateUserExistenceByIdAsync(userId);
+        
+        logger.LogInformation("Getting user with id {Id}.", userId);
+        return await userRepository.GetUserByIdAsync(userId);
     }
 }
