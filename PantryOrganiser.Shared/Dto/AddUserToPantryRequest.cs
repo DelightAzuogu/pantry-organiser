@@ -7,6 +7,6 @@ public class AddUserToPantryRequest
 {
     public string Email { get; set; }
 
-    [JsonConverter(typeof(JsonStringEnumConverter))]
+    [JsonConverter(typeof(FlexibleEnumListConverter<Role>))]
     public List<Role> Roles { get; set; }
 }

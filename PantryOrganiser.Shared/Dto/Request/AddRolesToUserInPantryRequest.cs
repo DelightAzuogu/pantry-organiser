@@ -5,6 +5,6 @@ namespace PantryOrganiser.Shared.Dto.Request;
 
 public class AddRolesToUserInPantryRequest
 {
-    [JsonConverter(typeof(JsonStringEnumConverter))]
+    [JsonConverter(typeof(FlexibleEnumListConverter<Role>))]
     public List<Role> Roles { get; set; }
 }

@@ -12,4 +12,5 @@ public static class ResponseMessages
     public const string PantryItemDoesNotBelongToUser = "Pantry item does not belong to user";
     public const string UserAlreadyExistsInPantry = "User already exists in pantry";
     public const string UserNotFoundInPantry = "User not found in pantry";
+    public const string PantryUserNotFound = "Pantry user not found";
 }

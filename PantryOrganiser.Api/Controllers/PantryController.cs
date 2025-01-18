@@ -89,10 +89,15 @@ public class PantryController(
             logger.LogError(e, "Pantry not found: {PantryId}", pantryId);
             return NotFound(ResponseMessages.PantryNotFound);
         }
-        catch (PantryOwnershipException e)
+        catch (PantryRoleNotFoundException e)
         {
-            logger.LogError(e, "Pantry {PantryId} does not belong to user {UserId}", pantryId, userContext.UserId);
-            return StatusCode(StatusCodes.Status403Forbidden, ResponseMessages.PantryDoesNotBelongToUser);
+            logger.LogError(e, "Pantry role not found");
+            return NotFound(ResponseMessages.PantryRoleNotFound);
+        }
+        catch (PantryUserNotFoundException e)
+        {
+            logger.LogError(e, "Pantry user not found");
+            return NotFound(ResponseMessages.PantryUserNotFound);
         }
         catch (Exception e)
         {
@@ -121,10 +126,15 @@ public class PantryController(
             logger.LogError(e, "Pantry not found: {PantryId}", pantryId);
             return NotFound(ResponseMessages.PantryNotFound);
         }
-        catch (PantryOwnershipException e)
+        catch (PantryRoleNotFoundException e)
         {
-            logger.LogError(e, "Pantry {PantryId} does not belong to user {UserId}", pantryId, userContext.UserId);
-            return StatusCode(StatusCodes.Status403Forbidden, ResponseMessages.PantryDoesNotBelongToUser);
+            logger.LogError(e, "Pantry role not found");
+            return NotFound(ResponseMessages.PantryRoleNotFound);
+        }
+        catch (PantryUserNotFoundException e)
+        {
+            logger.LogError(e, "Pantry user not found");
+            return NotFound(ResponseMessages.PantryUserNotFound);
         }
         catch (Exception e)
         {
@@ -153,14 +163,19 @@ public class PantryController(
             logger.LogError(e, "Pantry not found: {PantryId}", pantryId);
             return NotFound(ResponseMessages.PantryNotFound);
         }
-        catch (PantryOwnershipException e)
+        catch (PantryRoleNotFoundException e)
         {
-            logger.LogError(e, "Pantry {PantryId} does not belong to user {UserId}", pantryId, userContext.UserId);
-            return StatusCode(StatusCodes.Status403Forbidden, ResponseMessages.PantryDoesNotBelongToUser);
+            logger.LogError(e, "Pantry role not found");
+            return NotFound(ResponseMessages.PantryRoleNotFound);
+        }
+        catch (PantryUserNotFoundException e)
+        {
+            logger.LogError(e, "Pantry user not found");
+            return NotFound(ResponseMessages.PantryUserNotFound);
         }
         catch (Exception e)
         {
-            logger.LogError(e, "Error occurred while deleting pantry");
+            logger.LogError(e, "Error occurred while adding pantry item");
             return StatusCode(StatusCodes.Status500InternalServerError);
         }
     }
@@ -185,24 +200,19 @@ public class PantryController(
             logger.LogError(e, "Pantry item not found: {PantryItemId}", pantryItemId);
             return NotFound(ResponseMessages.PantryItemNotFound);
         }
-        catch (PantryItemOwnershipException e)
-        {
-            logger.LogError(e, "Pantry item {PantryItemId} does not belong to user {UserId}", pantryItemId, userContext.UserId);
-            return StatusCode(StatusCodes.Status403Forbidden, ResponseMessages.PantryItemDoesNotBelongToUser);
-        }
         catch (PantryNotFoundException e)
         {
             logger.LogError(e, "Pantry not found");
             return NotFound(ResponseMessages.PantryNotFound);
         }
-        catch (PantryOwnershipException e)
+        catch (PantryUserNotFoundException e)
         {
-            logger.LogError(e, "Pantry item does not belong to user {UserId}", userContext.UserId);
-            return StatusCode(StatusCodes.Status403Forbidden, ResponseMessages.PantryDoesNotBelongToUser);
+            logger.LogError(e, "Pantry user not found");
+            return NotFound(ResponseMessages.PantryUserNotFound);
         }
         catch (Exception e)
         {
-            logger.LogError(e, "Error occurred while deleting pantry");
+            logger.LogError(e, "Error occurred while getting pantry items");
             return StatusCode(StatusCodes.Status500InternalServerError);
         }
     }
@@ -227,14 +237,14 @@ public class PantryController(
             logger.LogError(e, "Pantry not found: {PantryId}", pantryId);
             return NotFound(ResponseMessages.PantryNotFound);
         }
-        catch (PantryOwnershipException e)
+        catch (PantryUserNotFoundException e)
         {
-            logger.LogError(e, "Pantry {PantryId} does not belong to user {UserId}", pantryId, userContext.UserId);
-            return StatusCode(StatusCodes.Status403Forbidden, ResponseMessages.PantryDoesNotBelongToUser);
+            logger.LogError(e, "Pantry user not found");
+            return NotFound(ResponseMessages.PantryUserNotFound);
         }
         catch (Exception e)
         {
-            logger.LogError(e, "Error occurred while deleting pantry");
+            logger.LogError(e, "Error occurred while adding to pantry");
             return StatusCode(StatusCodes.Status500InternalServerError);
         }
     }
@@ -259,24 +269,24 @@ public class PantryController(
             logger.LogError(e, "Pantry item not found: {PantryItemId}", pantryItemId);
             return NotFound(ResponseMessages.PantryItemNotFound);
         }
-        catch (PantryItemOwnershipException e)
+        catch (PantryRoleNotFoundException e)
         {
-            logger.LogError(e, "Pantry item {PantryItemId} does not belong to user {UserId}", pantryItemId, userContext.UserId);
-            return StatusCode(StatusCodes.Status403Forbidden, ResponseMessages.PantryItemDoesNotBelongToUser);
+            logger.LogError(e, "Pantry role not found");
+            return NotFound(ResponseMessages.PantryRoleNotFound);
+        }
+        catch (PantryUserNotFoundException e)
+        {
+            logger.LogError(e, "Pantry user not found");
+            return NotFound(ResponseMessages.PantryUserNotFound);
         }
         catch (PantryNotFoundException e)
         {
             logger.LogError(e, "Pantry not found");
             return NotFound(ResponseMessages.PantryNotFound);
         }
-        catch (PantryOwnershipException e)
-        {
-            logger.LogError(e, "Pantry item does not belong to user {UserId}", userContext.UserId);
-            return StatusCode(StatusCodes.Status403Forbidden, ResponseMessages.PantryDoesNotBelongToUser);
-        }
         catch (Exception e)
         {
-            logger.LogError(e, "Error occurred while deleting pantry");
+            logger.LogError(e, "Error occurred while updating pantry");
             return StatusCode(StatusCodes.Status500InternalServerError);
         }
     }
@@ -301,20 +311,20 @@ public class PantryController(
             logger.LogError(e, "Pantry item not found: {PantryItemId}", pantryItemId);
             return NotFound(ResponseMessages.PantryItemNotFound);
         }
-        catch (PantryItemOwnershipException e)
+        catch (PantryRoleNotFoundException e)
         {
-            logger.LogError(e, "Pantry item {PantryItemId} does not belong to user {UserId}", pantryItemId, userContext.UserId);
-            return StatusCode(StatusCodes.Status403Forbidden, ResponseMessages.PantryItemDoesNotBelongToUser);
+            logger.LogError(e, "Pantry role not found");
+            return NotFound(ResponseMessages.PantryRoleNotFound);
+        }
+        catch (PantryUserNotFoundException e)
+        {
+            logger.LogError(e, "Pantry user not found");
+            return NotFound(ResponseMessages.PantryUserNotFound);
         }
         catch (PantryNotFoundException e)
         {
             logger.LogError(e, "Pantry not found");
             return NotFound(ResponseMessages.PantryNotFound);
-        }
-        catch (PantryOwnershipException e)
-        {
-            logger.LogError(e, "Pantry item does not belong to user {UserId}", userContext.UserId);
-            return StatusCode(StatusCodes.Status403Forbidden, ResponseMessages.PantryDoesNotBelongToUser);
         }
         catch (Exception e)
         {
@@ -340,12 +350,12 @@ public class PantryController(
         }
         catch (PantryUserExistsException e)
         {
-            logger.LogError("User {UserId} already exists in pantry {PantryId}", request.Email, pantryId);
+            logger.LogError(e, "User {UserId} already exists in pantry {PantryId}", request.Email, pantryId);
             return StatusCode(StatusCodes.Status409Conflict, ResponseMessages.UserAlreadyExistsInPantry);
         }
         catch (PantryUserNotFoundException e)
         {
-            logger.LogError("User {UserId} not found in pantry {PantryId}", request.Email, pantryId);
+            logger.LogError(e, "User {UserId} not found in pantry {PantryId}", request.Email, pantryId);
             return NotFound(ResponseMessages.UserNotFoundInPantry);
         }
         catch (PantryNotFoundException e)
@@ -355,13 +365,8 @@ public class PantryController(
         }
         catch (PantryRoleNotFoundException e)
         {
-            logger.LogError("Pantry role not found");
+            logger.LogError(e, "Pantry role not found");
             return NotFound(ResponseMessages.PantryRoleNotFound);
-        }
-        catch (PantryOwnershipException e)
-        {
-            logger.LogError(e, "Pantry {PantryId} does not belong to user {UserId}", pantryId, userContext.UserId);
-            return StatusCode(StatusCodes.Status403Forbidden, ResponseMessages.PantryDoesNotBelongToUser);
         }
         catch (Exception e)
         {
@@ -387,17 +392,17 @@ public class PantryController(
         }
         catch (PantryUserNotFoundException e)
         {
-            logger.LogError($"Pantry user not found {pantryUserId}");
+            logger.LogError(e, $"Pantry user not found {pantryUserId}");
             return NotFound(ResponseMessages.UserNotFoundInPantry);
         }
         catch (PantryRoleNotFoundException e)
         {
-            logger.LogError("Pantry role not found");
+            logger.LogError(e, "Pantry role not found");
             return NotFound(ResponseMessages.PantryRoleNotFound);
         }
         catch (Exception e)
         {
-            logger.LogError(e, "Error occurred while adding user to pantry");
+            logger.LogError(e, "Error occurred while removing user to pantry");
             return StatusCode(StatusCodes.Status500InternalServerError);
         }
     }
@@ -422,10 +427,15 @@ public class PantryController(
             logger.LogError(e, "Pantry not found: {PantryId}", pantryId);
             return NotFound(ResponseMessages.PantryNotFound);
         }
-        catch (PantryOwnershipException e)
+        catch (PantryRoleNotFoundException e)
         {
-            logger.LogError(e, "Pantry {PantryId} does not belong to user {UserId}", pantryId, userContext.UserId);
-            return StatusCode(StatusCodes.Status403Forbidden, ResponseMessages.PantryDoesNotBelongToUser);
+            logger.LogError(e, "Pantry role not found");
+            return NotFound(ResponseMessages.PantryRoleNotFound);
+        }
+        catch (PantryUserNotFoundException e)
+        {
+            logger.LogError(e, "Pantry user not found");
+            return NotFound(ResponseMessages.PantryUserNotFound);
         }
         catch (Exception e)
         {
@@ -451,12 +461,12 @@ public class PantryController(
         }
         catch (PantryUserNotFoundException e)
         {
-            logger.LogError($"Pantry user not found {pantryUserId}");
+            logger.LogError(e, $"Pantry user not found {pantryUserId}");
             return NotFound(ResponseMessages.UserNotFoundInPantry);
         }
         catch (PantryRoleNotFoundException e)
         {
-            logger.LogError("Pantry role not found");
+            logger.LogError(e, "Pantry role not found");
             return NotFound(ResponseMessages.PantryRoleNotFound);
         }
         catch (Exception e)

@@ -24,7 +24,7 @@ public class PantryUserService(
 
         var userToAdd = await userService.GetUserByEmailAsync(request.Email);
 
-        await ValidateUserExistsInPantryAsync(pantryId, userToAdd.Id);
+        await ValidateUserDoesNotExistInPantryAsync(pantryId, userToAdd.Id);
 
         await pantryService.ValidateUserPantryRole(userId, pantryId, Role.Owner);
 
@@ -129,7 +129,7 @@ public class PantryUserService(
         return pantryUser;
     }
 
-    public async Task ValidateUserDoesNotExistInPantryAsync(Guid pantryId, Guid userId)
+    public async Task ValidateUserExistsInPantryAsync(Guid pantryId, Guid userId)
     {
         logger.LogInformation("Validating pantry user with pantry id {PantryId} and user id {UserId}", pantryId, userId);
 
@@ -142,7 +142,7 @@ public class PantryUserService(
         logger.LogInformation("Pantry user with pantry id {PantryId} and user id {UserId} exists", pantryId, userId);
     }
 
-    public async Task ValidateUserExistsInPantryAsync(Guid pantryId, Guid userId)
+    public async Task ValidateUserDoesNotExistInPantryAsync(Guid pantryId, Guid userId)
     {
         logger.LogInformation("Validating pantry user with pantry id {PantryId} and user id {UserId} Exist", pantryId, userId);
 

@@ -38,7 +38,7 @@ public class PantryItemService(
 
     public async Task<PantryItemResponse> GetPantryItemAsync(Guid pantryItemId, Guid userId)
     {
-        await pantryUserService.ValidateUserDoesNotExistInPantryAsync(pantryItemId, userId);
+        await pantryUserService.ValidateUserExistsInPantryAsync(pantryItemId, userId);
 
         logger.LogInformation("Getting pantry item {pantryItemId}", pantryItemId);
 
@@ -57,7 +57,7 @@ public class PantryItemService(
 
     public async Task<List<PantryItemResponse>> GetItemsInAPantryAsync(Guid pantryId, Guid userId)
     {
-        await pantryUserService.ValidateUserDoesNotExistInPantryAsync(pantryId, userId);
+        await pantryUserService.ValidateUserExistsInPantryAsync(pantryId, userId);
 
         logger.LogInformation("Getting pantry items for pantry {pantryId}", pantryId);
         var pantryItems = await pantryItemRepository.GetPantryItemsByPantryIdAsync(pantryId);

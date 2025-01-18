@@ -11,9 +11,9 @@ public interface IPantryUserService
 
     Task RemoveUserFromPantryAsync(Guid pantryUserId, Guid userId);
 
-    Task ValidateUserDoesNotExistInPantryAsync(Guid pantryId, Guid userId);
-
     Task ValidateUserExistsInPantryAsync(Guid pantryId, Guid userId);
+
+    Task ValidateUserDoesNotExistInPantryAsync(Guid pantryId, Guid userId);
 
     Task<PantryUser> GetPantryUserAsync(Guid pantryUserId);
 
