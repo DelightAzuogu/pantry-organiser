@@ -160,6 +160,115 @@ namespace PantryOrganiser.DataAccess.Migrations
                     b.ToTable("PantryUserRoles");
                 });
 
+            modelBuilder.Entity("PantryOrganiser.Domain.Entity.Recipe", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<TimeSpan>("CookTime")
+                        .HasColumnType("time");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Instructions")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<TimeSpan>("PrepTime")
+                        .HasColumnType("time");
+
+                    b.Property<int>("ServingSize")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Recipes");
+                });
+
+            modelBuilder.Entity("PantryOrganiser.Domain.Entity.RecipeIngredient", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("PantryItemId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<double>("Quantity")
+                        .HasColumnType("float");
+
+                    b.Property<Guid>("RecipeId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PantryItemId");
+
+                    b.HasIndex("Quantity");
+
+                    b.HasIndex("RecipeId");
+
+                    b.ToTable("RecipeIngredients");
+                });
+
+            modelBuilder.Entity("PantryOrganiser.Domain.Entity.RecipeUser", b =>
+                {
+                    b.Property<Guid>("RecipeId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool>("IsOwner")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("RecipeId", "UserId");
+
+                    b.HasIndex("RecipeId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("RecipeUsers");
+                });
+
             modelBuilder.Entity("PantryOrganiser.Domain.Entity.ShoppingBasket", b =>
                 {
                     b.Property<Guid>("Id")
@@ -298,6 +407,44 @@ namespace PantryOrganiser.DataAccess.Migrations
                     b.Navigation("PantryUser");
                 });
 
+            modelBuilder.Entity("PantryOrganiser.Domain.Entity.RecipeIngredient", b =>
+                {
+                    b.HasOne("PantryOrganiser.Domain.Entity.PantryItem", "PantryItem")
+                        .WithMany("RecipeIngredients")
+                        .HasForeignKey("PantryItemId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("PantryOrganiser.Domain.Entity.Recipe", "Recipe")
+                        .WithMany("RecipeIngredients")
+                        .HasForeignKey("RecipeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("PantryItem");
+
+                    b.Navigation("Recipe");
+                });
+
+            modelBuilder.Entity("PantryOrganiser.Domain.Entity.RecipeUser", b =>
+                {
+                    b.HasOne("PantryOrganiser.Domain.Entity.Recipe", "Recipe")
+                        .WithMany("RecipeUsers")
+                        .HasForeignKey("RecipeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("PantryOrganiser.Domain.Entity.User", "User")
+                        .WithMany("RecipeUsers")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Recipe");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("PantryOrganiser.Domain.Entity.ShoppingBasket", b =>
                 {
                     b.HasOne("PantryOrganiser.Domain.Entity.User", "User")
@@ -337,12 +484,21 @@ namespace PantryOrganiser.DataAccess.Migrations
 
             modelBuilder.Entity("PantryOrganiser.Domain.Entity.PantryItem", b =>
                 {
+                    b.Navigation("RecipeIngredients");
+
                     b.Navigation("ShoppingBasketItems");
                 });
 
             modelBuilder.Entity("PantryOrganiser.Domain.Entity.PantryUser", b =>
                 {
                     b.Navigation("PantryUserRoles");
+                });
+
+            modelBuilder.Entity("PantryOrganiser.Domain.Entity.Recipe", b =>
+                {
+                    b.Navigation("RecipeIngredients");
+
+                    b.Navigation("RecipeUsers");
                 });
 
             modelBuilder.Entity("PantryOrganiser.Domain.Entity.ShoppingBasket", b =>
@@ -353,6 +509,8 @@ namespace PantryOrganiser.DataAccess.Migrations
             modelBuilder.Entity("PantryOrganiser.Domain.Entity.User", b =>
                 {
                     b.Navigation("PantryUsers");
+
+                    b.Navigation("RecipeUsers");
 
                     b.Navigation("ShoppingBaskets");
                 });

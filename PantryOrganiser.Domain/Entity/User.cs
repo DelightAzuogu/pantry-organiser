@@ -8,4 +8,6 @@ public class User : BaseEntity
     public virtual List<ShoppingBasket> ShoppingBaskets { get; set; }
 
     public virtual List<PantryUser> PantryUsers { get; set; }
+    
+    public virtual List<RecipeUser> RecipeUsers { get; set; }
 }

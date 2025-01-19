@@ -142,6 +142,9 @@ public static class ServiceExtensions
         services.AddScoped<IShoppingBasketItemRepository, ShoppingBasketItemRepository>();
         services.AddScoped<IPantryUserRepository, PantryUserRepository>();
         services.AddScoped<IPantryUserRoleRepository, PantryUserRoleRepository>();
+        services.AddScoped<IRecipeRepository, RecipeRepository>();
+        services.AddScoped<IRecipeIngredientRepository, RecipeIngredientRepository>();
+        services.AddScoped<IRecipeUserRepository, RecipeUserRepository>();
 
         services.AddScoped<IAsyncInitializer, Initializer>();
     }
