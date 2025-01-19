@@ -21,6 +21,9 @@ public class PantryItemConfiguration : IEntityTypeConfiguration<PantryItem>
             .WithMany(x => x.PantryItems)
             .HasForeignKey(x => x.PantryId)
             .OnDelete(DeleteBehavior.Restrict);
+        
+        builder.Property(x=> x.QuantityUnit)
+            .HasConversion<string>();
 
         builder.HasIndex(x => x.PantryId);
     }

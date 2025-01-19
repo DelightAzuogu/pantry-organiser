@@ -25,6 +25,7 @@ public class PantryItemService(
         {
             Name = request.Name,
             Quantity = request.Quantity,
+            QuantityUnit = request.QuantityUnit,
             PantryId = pantryId,
             ExpiryDate = request.ExpiryDate,
             Description = request.Description,
@@ -49,6 +50,7 @@ public class PantryItemService(
             Id = pantryItem.Id,
             Name = pantryItem.Name,
             Quantity = pantryItem.Quantity,
+            QuantityUnit = pantryItem.QuantityUnit,
             ExpiryDate = pantryItem.ExpiryDate,
             Description = pantryItem.Description,
             Brand = pantryItem.Brand
@@ -67,6 +69,7 @@ public class PantryItemService(
             Id = pantryItem.Id,
             Name = pantryItem.Name,
             Quantity = pantryItem.Quantity,
+            QuantityUnit = pantryItem.QuantityUnit,
             ExpiryDate = pantryItem.ExpiryDate,
             Description = pantryItem.Description,
             Brand = pantryItem.Brand

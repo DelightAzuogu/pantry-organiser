@@ -1,4 +1,6 @@
-﻿namespace PantryOrganiser.Domain.Entity;
+﻿using PantryOrganiser.Shared.Enum;
+
+namespace PantryOrganiser.Domain.Entity;
 
 public class PantryItem: BaseEntity
 {
@@ -6,7 +8,9 @@ public class PantryItem: BaseEntity
     
     public string Description { get; set; }
     
-    public int Quantity { get; set; }
+    public double Quantity { get; set; }
+    
+    public QuantityUnit QuantityUnit { get; set; }
     
     public string Brand { get; set; }
     

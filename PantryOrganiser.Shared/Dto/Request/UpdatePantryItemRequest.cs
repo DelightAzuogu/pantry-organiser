@@ -1,3 +1,6 @@
+using System.Text.Json.Serialization;
+using PantryOrganiser.Shared.Enum;
+
 namespace PantryOrganiser.Shared.Dto.Request;
 
 public class UpdatePantryItemRequest
@@ -6,7 +9,10 @@ public class UpdatePantryItemRequest
 
     public string Description { get; set; }
 
-    public int Quantity { get; set; }
+    public double Quantity { get; set; }
+
+    [JsonConverter(typeof(JsonStringEnumConverter))]
+    public QuantityUnit QuantityUnit { get; set; }
 
     public string Brand { get; set; }
 
