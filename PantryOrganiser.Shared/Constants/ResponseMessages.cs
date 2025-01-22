@@ -13,4 +13,6 @@ public static class ResponseMessages
     public const string UserAlreadyExistsInPantry = "User already exists in pantry";
     public const string UserNotFoundInPantry = "User not found in pantry";
     public const string PantryUserNotFound = "Pantry user not found";
+    public const string RecipeNotFound = "Recipe not found";
+    public const string UnauthorizedAccess = "Unauthorized access";
 }

@@ -155,6 +155,9 @@ public static class ServiceExtensions
         services.AddScoped<IPantryService, PantryService>();
         services.AddScoped<IPantryItemService, PantryItemService>();
         services.AddScoped<IPantryUserService, PantryUserService>();
+        services.AddScoped<IRecipeService, RecipeService>();
+        services.AddScoped<IRecipeUserService, RecipeUserService>();
+        services.AddScoped<IRecipeIngredientService, RecipeIngredientService>();
 
         services.AddSingleton<IJwtHelper, JwtHelper>();
         services.AddSingleton<IHashHelper, HashHelper>();
