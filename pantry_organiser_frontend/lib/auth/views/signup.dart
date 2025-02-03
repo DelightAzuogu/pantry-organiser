@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gap/gap.dart';
+import 'package:pantry_organiser_frontend/auth/auth.dart';
+import 'package:pantry_organiser_frontend/helpers/showCustomToast.dart';
 import 'package:reactive_forms/reactive_forms.dart';
 
-class SignUpPage extends StatelessWidget {
+class SignUpPage extends ConsumerWidget {
   SignUpPage({super.key});
 
   final FormGroup form = FormGroup(
@@ -29,7 +32,22 @@ class SignUpPage extends StatelessWidget {
   );
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    ref.listen(authenticationControllerProvider, (_, next) {
+      next.maybeWhen(
+        authenticated: (_) {
+          Navigator.of(context).pushReplacementNamed(
+            '/home',
+          );
+        },
+        orElse: () {
+          showCustomToast(message: 'Failed to sign user up 🚩');
+        },
+      );
+    });
+
+    final authController = ref.watch(authenticationControllerProvider.notifier);
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Sign Up'),
@@ -81,7 +99,14 @@ class SignUpPage extends StatelessWidget {
               ReactiveFormConsumer(
                 builder: (context, formGroup, child) {
                   return ElevatedButton(
-                    onPressed: form.valid ? () {} : null,
+                    onPressed: form.valid
+                        ? () async {
+                            await authController.register(
+                              form.control('email').value as String,
+                              form.control('password').value as String,
+                            );
+                          }
+                        : null,
                     child: const Text('Sign Up'),
                   );
                 },

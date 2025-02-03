@@ -10,6 +10,13 @@ namespace PantryOrganiser.Api.Controllers;
 [Route("api/auth")]
 public class AuthenticationController(ILogger<AuthenticationController> logger, IUserService userService) : ControllerBase
 {
+    [HttpGet("/")]
+    public IActionResult Ping()
+    {
+        return Ok("Pong");
+    }
+    
+    
     [HttpPost("login")]
     public async Task<IActionResult> Login([FromBody] LoginRequestDto request)
     {
