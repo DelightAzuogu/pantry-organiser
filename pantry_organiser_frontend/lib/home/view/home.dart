@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:pantry_organiser_frontend/app/view/custom_app_bar.dart';
+import 'package:pantry_organiser_frontend/custom_widgets/custom_widgets.dart';
 
 class Home extends ConsumerWidget {
   const Home({super.key});
