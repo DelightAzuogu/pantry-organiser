@@ -5,8 +5,8 @@ import 'package:pantry_organiser_frontend/auth/auth.dart';
 import 'package:pantry_organiser_frontend/helpers/showCustomToast.dart';
 import 'package:reactive_forms/reactive_forms.dart';
 
-class SignUpPage extends ConsumerWidget {
-  SignUpPage({super.key});
+class LoginPage extends ConsumerWidget {
+  LoginPage({super.key});
 
   final FormGroup form = FormGroup(
     {
@@ -22,13 +22,7 @@ class SignUpPage extends ConsumerWidget {
           Validators.minLength(6),
         ],
       ),
-      'confirmPassword': FormControl<String>(
-        validators: [Validators.required],
-      ),
     },
-    validators: [
-      Validators.mustMatch('password', 'confirmPassword'),
-    ],
   );
 
   @override
@@ -51,8 +45,8 @@ class SignUpPage extends ConsumerWidget {
         child: Padding(
           padding: const EdgeInsets.all(16),
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
             children: [
+              const Spacer(),
               Card(
                 child: Padding(
                   padding: const EdgeInsets.all(24),
@@ -62,7 +56,7 @@ class SignUpPage extends ConsumerWidget {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         Text(
-                          'Sign Up',
+                          'Login',
                           style: Theme.of(context).textTheme.headlineSmall,
                         ),
                         const Gap(24),
@@ -84,42 +78,33 @@ class SignUpPage extends ConsumerWidget {
                             prefixIcon: Icon(Icons.lock_outline),
                           ),
                         ),
-                        const Gap(16),
-                        ReactiveTextField<String>(
-                          formControlName: 'confirmPassword',
-                          keyboardType: TextInputType.visiblePassword,
-                          obscureText: true,
-                          decoration: const InputDecoration(
-                            labelText: 'Confirm Password',
-                            prefixIcon: Icon(Icons.lock_outline),
-                          ),
-                        ),
                         const Gap(24),
                         ReactiveFormConsumer(
                           builder: (context, formGroup, child) {
                             return ElevatedButton(
                               onPressed: form.valid
                                   ? () async {
-                                      await authController.register(
+                                      await authController.login(
                                         form.control('email').value as String,
                                         form.control('password').value as String,
                                       );
                                     }
                                   : null,
-                              child: const Text('Sign Up'),
+                              child: const Text('Login'),
                             );
                           },
                         ),
                         const Gap(16),
                         TextButton(
-                          onPressed: () => Navigator.pushReplacementNamed(context, '/login'),
-                          child: const Text('Have an account? Login'),
+                          onPressed: () => Navigator.pushReplacementNamed(context, '/signup'),
+                          child: const Text("Don't have an account? Sign Up"),
                         ),
                       ],
                     ),
                   ),
                 ),
               ),
+              const Spacer(),
             ],
           ),
         ),
