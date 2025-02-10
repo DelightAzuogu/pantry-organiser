@@ -27,8 +27,9 @@ public class PantryController(
         {
             logger.LogInformation("Creating pantry with name: {Name} by user {user}", request.Name, userContext.UserId);
 
-            var result = await pantryService.CreatePantryAsync(request.Name, userContext.UserId);
-            return Ok(result);
+            await pantryService.CreatePantryAsync(request.Name, userContext.UserId);
+
+            return StatusCode(StatusCodes.Status201Created);
         }
         catch (UserNotFoundException e)
         {
@@ -42,7 +43,7 @@ public class PantryController(
         }
     }
 
-    [HttpGet("user")]
+    [HttpGet("")]
     public async Task<IActionResult> GetUserPantries()
     {
         try
@@ -217,7 +218,7 @@ public class PantryController(
         }
     }
 
-    [HttpGet("items/{pantryId:guid}")]
+    [HttpGet("{pantryId:guid}/items")]
     public async Task<IActionResult> GetItemsInPantry([FromRoute] Guid pantryId)
     {
         try

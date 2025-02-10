@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pantry_organiser_frontend/auth/auth.dart';
 import 'package:pantry_organiser_frontend/home/home.dart';
 import 'package:pantry_organiser_frontend/l10n/l10n.dart';
+import 'package:pantry_organiser_frontend/pantry_item/pantry_item.dart';
 import 'package:pantry_organiser_frontend/theme/app_theme.dart';
 
 class App extends ConsumerWidget {
@@ -20,6 +21,7 @@ class App extends ConsumerWidget {
         '/signup': (context) => SignUpPage(),
         '/home': (context) => const Home(),
         '/login': (context) => LoginPage(),
+        '/pantryItems': (context) => const PantryItemsPage(),
       },
       initialRoute: authState.when(
         unAuthenticated: () => '/login',

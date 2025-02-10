@@ -1,6 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pantry_organiser_frontend/api/api.dart';
-import 'package:pantry_organiser_frontend/api/provider/auth_provider.dart';
 import 'package:pantry_organiser_frontend/auth/auth.dart';
 import 'package:pantry_organiser_frontend/helpers/showCustomToast.dart';
 import 'package:pantry_organiser_frontend/service/service.dart';

@@ -5,7 +5,7 @@ class JwtModel {
 
   // Create JwtModel from JSON
   factory JwtModel.fromJson(Map<String, dynamic> json) {
-    final token = json['access_token'] ?? '';
+    final token = json['accessToken'] ?? '';
 
     return JwtModel(
       accessToken: token as String,

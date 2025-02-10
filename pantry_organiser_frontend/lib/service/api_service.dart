@@ -1,5 +1,16 @@
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http_interceptor/http_interceptor.dart';
 import 'package:pantry_organiser_frontend/api/api.dart';
+import 'package:pantry_organiser_frontend/auth/auth.dart';
+
+final apiServiceProvider = Provider<ApiService>((ref) {
+  final token = ref.watch(authenticationControllerProvider).when(
+        authenticated: (user) => user.token,
+        unAuthenticated: () => '',
+      );
+
+  return ApiService(token);
+});
 
 class ApiService {
   ApiService(this.token) {
@@ -29,14 +40,22 @@ class ApiService {
     };
   }
 
-  Future<Response> getData(String endpoint, {Map<String, dynamic>? queryParams, Map<String, String>? headers}) async {
+  Future<Response> get(
+    String endpoint, {
+    Map<String, dynamic>? queryParams,
+    Map<String, String>? headers,
+  }) async {
     final uri = _buildUrl(endpoint);
     final finalUri = queryParams != null ? uri.replace(queryParameters: queryParams) : uri;
 
     return _client.get(finalUri, headers: _buildHeaders(headers));
   }
 
-  Future<Response> post(String endpoint, dynamic body, {Map<String, String>? headers}) async {
+  Future<Response> post(
+    String endpoint, {
+    Map<String, String>? headers,
+    String? body,
+  }) async {
     return _client.post(
       _buildUrl(endpoint),
       body: body,
@@ -44,7 +63,11 @@ class ApiService {
     );
   }
 
-  Future<Response> put(String endpoint, dynamic body, {Map<String, String>? headers}) async {
+  Future<Response> put(
+    String endpoint,
+    dynamic body, {
+    Map<String, String>? headers,
+  }) async {
     return _client.put(
       _buildUrl(endpoint),
       body: body,
@@ -52,14 +75,21 @@ class ApiService {
     );
   }
 
-  Future<Response> delete(String endpoint, {Map<String, String>? headers}) async {
+  Future<Response> delete(
+    String endpoint, {
+    Map<String, String>? headers,
+  }) async {
     return _client.delete(
       _buildUrl(endpoint),
       headers: _buildHeaders(headers),
     );
   }
 
-  Future<Response> patch(String endpoint, dynamic body, {Map<String, String>? headers}) async {
+  Future<Response> patch(
+    String endpoint,
+    dynamic body, {
+    Map<String, String>? headers,
+  }) async {
     return _client.patch(
       _buildUrl(endpoint),
       body: body,
