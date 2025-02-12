@@ -19,10 +19,16 @@ class CustomScaffold extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        leading: Navigator.canPop(context)
+            ? IconButton(
+                icon: const Icon(Icons.arrow_back),
+                onPressed: () => Navigator.pop(context),
+              )
+            : null,
         title: Text(title),
         actions: actions,
       ),
-      drawer: const CustomDrawer(),
+      endDrawer: const CustomDrawer(),
       body: SafeArea(
         child: body,
       ),

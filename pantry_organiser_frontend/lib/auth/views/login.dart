@@ -89,6 +89,7 @@ class LoginPage extends ConsumerWidget {
                                     );
                                   }
                                 : null,
+                            width: double.infinity,
                             child: const Text('Login'),
                           );
                         },

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:gap/gap.dart';
 import 'package:pantry_organiser_frontend/auth/auth.dart';
 import 'package:pantry_organiser_frontend/helpers/showCustomToast.dart';
 
@@ -22,81 +21,109 @@ class CustomDrawer extends ConsumerWidget {
 
     final authController = ref.watch(authenticationControllerProvider.notifier);
 
-    return Drawer(
-      child: Column(
-        children: [
-          DrawerHeader(
-            decoration: BoxDecoration(
-              color: Theme.of(context).colorScheme.primary,
-            ),
-            child: Center(
-              child: Text(
-                'Pantry Organiser',
-                style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                      color: Theme.of(context).colorScheme.onPrimary,
-                    ),
-              ),
+    return Align(
+      alignment: Alignment.centerRight,
+      child: ConstrainedBox(
+        constraints: BoxConstraints(
+          maxHeight: MediaQuery.of(context).size.height * 0.7,
+          maxWidth: MediaQuery.of(context).size.width * 0.85,
+        ),
+        child: Drawer(
+          shape: const RoundedRectangleBorder(
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(16),
+              bottomLeft: Radius.circular(16),
             ),
           ),
-          Expanded(
-            child: ListView(
-              padding: EdgeInsets.zero,
-              children: [
-                ListTile(
-                  leading: Icon(
-                    Icons.kitchen_outlined,
-                    color: Theme.of(context).colorScheme.primary,
+          child: Column(
+            children: [
+              Container(
+                padding: const EdgeInsets.symmetric(vertical: 24),
+                decoration: BoxDecoration(
+                  color: Theme.of(context).colorScheme.primary,
+                  borderRadius: const BorderRadius.only(
+                    topLeft: Radius.circular(16),
                   ),
-                  title: Text(
-                    'Pantry',
-                    style: Theme.of(context).textTheme.titleMedium,
-                  ),
-                  onTap: () {
-                    Navigator.pop(context);
-                    Navigator.pushReplacementNamed(context, '/home');
-                  },
-                  tileColor: Colors.transparent,
-                  hoverColor: Theme.of(context).colorScheme.primaryContainer,
                 ),
-                // ListTile(
-                //   leading: Icon(
-                //     Icons.menu_book_outlined,
-                //     color: Theme.of(context).colorScheme.primary,
-                //   ),
-                //   title: Text(
-                //     'Recipes',
-                //     style: Theme.of(context).textTheme.titleMedium,
-                //   ),
-                //   onTap: () {
-                //     Navigator.pop(context);
-                //     Navigator.pushReplacementNamed(context, '/recipe');
-                //   },
-                //   tileColor: Colors.transparent,
-                //   hoverColor: Theme.of(context).colorScheme.primaryContainer,
-                // ),
-              ],
-            ),
-          ),
-          // Logout button at the bottom
-          const Divider(),
-          ListTile(
-            leading: const Icon(
-              Icons.logout_outlined,
-              color: Colors.red,
-            ),
-            title: Text(
-              'Logout',
-              style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    color: Colors.red,
+                child: Center(
+                  child: Text(
+                    'Pantry Organiser',
+                    style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                          color: Theme.of(context).colorScheme.onPrimary,
+                        ),
                   ),
-            ),
-            onTap: () async {
-              await authController.logout();
-            },
-            tileColor: Colors.transparent,
+                ),
+              ),
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: ListView(
+                    children: [
+                      Card(
+                        elevation: 2,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: ListTile(
+                          leading: Icon(
+                            Icons.kitchen_outlined,
+                            color: Theme.of(context).colorScheme.primary,
+                          ),
+                          title: Text(
+                            'Pantry',
+                            style: Theme.of(context).textTheme.titleMedium,
+                          ),
+                          onTap: () {
+                            Navigator.pop(context);
+                            Navigator.pushReplacementNamed(context, '/home');
+                          },
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                        ),
+                      ),
+                      // Add more card-style buttons here
+                    ],
+                  ),
+                ),
+              ),
+              Container(
+                decoration: BoxDecoration(
+                  border: Border(
+                    top: BorderSide(
+                      color: Theme.of(context).dividerColor,
+                    ),
+                  ),
+                ),
+                child: Card(
+                  margin: const EdgeInsets.all(16),
+                  elevation: 2,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: ListTile(
+                    leading: const Icon(
+                      Icons.logout_outlined,
+                      color: Colors.red,
+                    ),
+                    title: Text(
+                      'Logout',
+                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                            color: Colors.red,
+                          ),
+                    ),
+                    onTap: () async {
+                      await authController.logout();
+                    },
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                ),
+              ),
+            ],
           ),
-          const Gap(32)
-        ],
+        ),
       ),
     );
   }

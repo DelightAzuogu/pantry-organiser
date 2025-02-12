@@ -1,46 +1,50 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-class AppTheme {
-  // Colors
-  static const Color _primaryColor = Color.fromRGBO(75, 0, 110, 1);
-  static const Color _secondaryColor = Colors.redAccent;
-  static const Color _tertiaryColor = Color.fromRGBO(230, 247, 255, 1);
-  static const Color _scaffoldBackgroundColor = Color(0xFFF3F4F6);
-  static const Color _cardBackgroundColor = Colors.white;
-  static const Color _disabledButtonColor = Colors.grey; // Added disabled color
+class DarkAppTheme {
+  // Colors for Dark Theme
+  static const Color _primaryColor = Color.fromRGBO(147, 51, 234, 1);
+  static const Color _secondaryColor = Color.fromRGBO(255, 99, 99, 1);
+  static const Color _tertiaryColor = Color.fromRGBO(26, 35, 46, 1);
+  static const Color _scaffoldBackgroundColor = Color(0xFF121212);
+  static const Color _cardBackgroundColor = Color(0xFF1E1E1E);
+  static const Color _disabledButtonColor = Color(0xFF424242);
 
-  // Text Styles
+  // Text Styles for Dark Theme
   static const _headlineSmall = TextStyle(
     fontSize: 24,
     fontWeight: FontWeight.bold,
-    color: _primaryColor,
+    color: Colors.white,
   );
 
   static const _titleLarge = TextStyle(
     fontSize: 18,
     fontWeight: FontWeight.bold,
-    color: _primaryColor,
+    color: Colors.white,
   );
 
   static const _bodyMedium = TextStyle(
     fontSize: 14,
     fontWeight: FontWeight.normal,
+    color: Colors.white70,
   );
 
   static const _bodyLarge = TextStyle(
     fontSize: 16,
     fontWeight: FontWeight.w600,
+    color: Colors.white,
   );
 
   static const _titleMedium = TextStyle(
     fontSize: 16,
     fontWeight: FontWeight.w600,
+    color: Colors.white,
   );
 
   static const _titleSmall = TextStyle(
     fontSize: 14,
     fontWeight: FontWeight.w500,
+    color: Colors.white70,
   );
 
   static const _textTheme = TextTheme(
@@ -54,7 +58,7 @@ class AppTheme {
 
   // App Bar Theme
   static const _appBarTheme = AppBarTheme(
-    backgroundColor: _primaryColor,
+    backgroundColor: _tertiaryColor,
     titleTextStyle: TextStyle(
       color: Colors.white,
       fontSize: 20,
@@ -68,11 +72,11 @@ class AppTheme {
     fillColor: _cardBackgroundColor,
     border: OutlineInputBorder(
       borderRadius: BorderRadius.circular(12),
-      borderSide: BorderSide(color: _primaryColor.withOpacity(0.3)),
+      borderSide: BorderSide(color: Colors.white.withOpacity(0.1)),
     ),
     enabledBorder: OutlineInputBorder(
       borderRadius: BorderRadius.circular(12),
-      borderSide: BorderSide(color: _primaryColor.withOpacity(0.3)),
+      borderSide: BorderSide(color: Colors.white.withOpacity(0.1)),
     ),
     focusedBorder: OutlineInputBorder(
       borderRadius: BorderRadius.circular(12),
@@ -83,7 +87,9 @@ class AppTheme {
       borderSide: const BorderSide(color: _secondaryColor),
     ),
     contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-    prefixIconColor: _primaryColor,
+    prefixIconColor: Colors.white70,
+    hintStyle: TextStyle(color: Colors.white.withOpacity(0.5)),
+    labelStyle: TextStyle(color: Colors.white.withOpacity(0.7)),
   );
 
   // Elevated Button Theme
@@ -91,13 +97,13 @@ class AppTheme {
     style: ButtonStyle(
       backgroundColor: WidgetStateProperty.resolveWith<Color>((states) {
         if (states.contains(WidgetState.disabled)) {
-          return _disabledButtonColor; // Use grey for disabled state
+          return _disabledButtonColor;
         }
         return _primaryColor;
       }),
       foregroundColor: WidgetStateProperty.resolveWith<Color>((states) {
         if (states.contains(WidgetState.disabled)) {
-          return Colors.white70; // Slightly transparent white for disabled text
+          return Colors.white38;
         }
         return Colors.white;
       }),
@@ -114,9 +120,9 @@ class AppTheme {
       ),
       elevation: WidgetStateProperty.resolveWith<double>((states) {
         if (states.contains(WidgetState.disabled)) {
-          return 0; // No elevation for disabled state
+          return 0;
         }
-        return 2;
+        return 4;
       }),
       textStyle: WidgetStateProperty.all(
         const TextStyle(
@@ -129,7 +135,7 @@ class AppTheme {
 
   // Card Theme
   static final _cardTheme = CardTheme(
-    elevation: 4,
+    elevation: 8,
     shape: RoundedRectangleBorder(
       borderRadius: BorderRadius.circular(16),
     ),
@@ -139,7 +145,7 @@ class AppTheme {
   // Text Button Theme
   final _textButtonTheme = TextButtonThemeData(
     style: ButtonStyle(
-      foregroundColor: WidgetStateProperty.all(_primaryColor),
+      foregroundColor: WidgetStateProperty.all(Colors.white70),
       textStyle: WidgetStateProperty.all(
         const TextStyle(
           fontSize: 14,
@@ -152,13 +158,14 @@ class AppTheme {
     ),
   );
 
-  ThemeData get lightTheme => ThemeData(
+  ThemeData get darkTheme => ThemeData(
         useMaterial3: false,
-        brightness: Brightness.light,
-        colorScheme: const ColorScheme.light(
+        brightness: Brightness.dark,
+        colorScheme: const ColorScheme.dark(
           primary: _primaryColor,
           secondary: _secondaryColor,
           tertiary: _tertiaryColor,
+          surface: _cardBackgroundColor,
         ),
         textTheme: GoogleFonts.poppinsTextTheme(_textTheme),
         appBarTheme: _appBarTheme,
