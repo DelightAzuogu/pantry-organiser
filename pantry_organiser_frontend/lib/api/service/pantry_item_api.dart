@@ -30,4 +30,24 @@ class PantryItemApi {
 
     throw Exception('Failed to get pantry items');
   }
+
+  Future<void> createPantryItem({
+    required CreatePantryItemRequest request,
+    required String pantryId,
+  }) async {
+    try {
+      final response = await _apiService.post(
+        '$_pantryUrl/$pantryId/add',
+        body: request.toJsonEncoded(),
+      );
+
+      if (response.statusCode == 201) {
+        return;
+      }
+    } catch (e) {
+      rethrow;
+    }
+
+    throw Exception('Failed to create pantry item');
+  }
 }

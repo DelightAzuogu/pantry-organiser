@@ -23,6 +23,7 @@ class App extends ConsumerWidget {
         '/home': (context) => const Home(),
         '/login': (context) => LoginPage(),
         '/pantryItems': (context) => const PantryItemsPage(),
+        '/addPantryItem': (context) => const AddPantryItemPage(),
       },
       initialRoute: authState.when(
         unAuthenticated: () => '/login',

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pantry_organiser_frontend/auth/auth.dart';
-import 'package:pantry_organiser_frontend/helpers/showCustomToast.dart';
+import 'package:pantry_organiser_frontend/helpers/custom_toast.dart';
 
 class CustomDrawer extends ConsumerWidget {
   const CustomDrawer({super.key});
@@ -74,7 +74,6 @@ class CustomDrawer extends ConsumerWidget {
                             style: Theme.of(context).textTheme.titleMedium,
                           ),
                           onTap: () {
-                            Navigator.pop(context);
                             Navigator.pushReplacementNamed(context, '/home');
                           },
                           shape: RoundedRectangleBorder(

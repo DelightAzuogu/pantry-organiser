@@ -1,11 +1,14 @@
 enum QuantityUnit {
-  count,
-  kilogram,
-  gram,
-  ounce,
-  tablespoon,
-  teaspoon,
-  cup;
+  count('ct'),
+  kilogram('kg'),
+  gram('g'),
+  ounce('oz'),
+  tablespoon('tbsp'),
+  teaspoon('tsp'),
+  cup('cup');
+
+  const QuantityUnit(this.shortForm);
+  final String shortForm;
 
   static QuantityUnit fromString(String value) {
     return QuantityUnit.values.firstWhere(

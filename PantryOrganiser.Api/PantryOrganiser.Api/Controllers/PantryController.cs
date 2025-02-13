@@ -144,7 +144,7 @@ public class PantryController(
         }
     }
 
-    [HttpPost("item/{pantryId:guid}")]
+    [HttpPost("{pantryId:guid}/add")]
     public async Task<IActionResult> AddPantryItem([FromRoute] Guid pantryId, CreatePantryItemRequest request)
     {
         try
@@ -152,7 +152,7 @@ public class PantryController(
             logger.LogInformation("Adding an item to pantry {pantryId} by user {user}", pantryId, userContext.UserId);
             var result = await pantryItemService.AddPantryItemAsync(request, pantryId, userContext.UserId);
 
-            return Ok(result);
+            return Created();
         }
         catch (UserNotFoundException e)
         {

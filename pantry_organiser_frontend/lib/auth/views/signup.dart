@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gap/gap.dart';
 import 'package:pantry_organiser_frontend/auth/auth.dart';
 import 'package:pantry_organiser_frontend/custom_widgets/custom_widgets.dart';
-import 'package:pantry_organiser_frontend/helpers/showCustomToast.dart';
+import 'package:pantry_organiser_frontend/helpers/custom_toast.dart';
 import 'package:reactive_forms/reactive_forms.dart';
 
 class SignUpPage extends ConsumerWidget {

@@ -17,16 +17,10 @@ class PantryItem extends Equatable {
       id: json['id'] as String,
       name: json['name'] as String,
       description: json['description'] as String?,
-      quantity: json['quantity'] as double,
-      quantityUnit: QuantityUnit.fromString(
-        json['quantityUnit'] as String,
-      ),
+      quantity: (json['quantity'] is int) ? (json['quantity'] as int).toDouble() : json['quantity'] as double,
+      quantityUnit: QuantityUnit.fromString(json['quantityUnit'] as String),
       brand: json['brand'] as String?,
-      expiryDate: json['expiryDate'] != null
-          ? DateTime.parse(
-              json['expiryDate'] as String,
-            )
-          : null,
+      expiryDate: json['expiryDate'] != null ? DateTime.parse(json['expiryDate'] as String) : null,
     );
   }
 
