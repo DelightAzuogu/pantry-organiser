@@ -18,6 +18,7 @@ class AddPantryItemPage extends ConsumerStatefulWidget {
 
 class _AddPantryItemPageState extends ConsumerState<AddPantryItemPage> {
   late final FormGroup form;
+  bool isEditing = false;
 
   @override
   void initState() {
@@ -36,10 +37,26 @@ class _AddPantryItemPageState extends ConsumerState<AddPantryItemPage> {
       'brand': FormControl<String>(),
       'expiryDate': FormControl<DateTime>(),
     });
+
+    // Get the selected pantry item and pre-fill the form if it exists
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final selectedPantryItem = ref.read(selectedPantryItemProvider);
+      if (selectedPantryItem != null) {
+        isEditing = true;
+        form.patchValue({
+          'name': selectedPantryItem.name,
+          'description': selectedPantryItem.description,
+          'quantity': selectedPantryItem.quantity,
+          'quantityUnit': selectedPantryItem.quantityUnit,
+          'brand': selectedPantryItem.brand,
+          'expiryDate': selectedPantryItem.expiryDate,
+        });
+      }
+    });
   }
 
   Future<void> _onSubmit() async {
-    final createPantryItemRequest = CreatePantryItemRequest(
+    final request = CreatePantryItemRequest(
       name: form.control('name').value! as String,
       description: form.control('description').value as String?,
       quantity: form.control('quantity').value! as double,
@@ -48,12 +65,22 @@ class _AddPantryItemPageState extends ConsumerState<AddPantryItemPage> {
       expiryDate: form.control('expiryDate').value as DateTime?,
     );
 
-    final pantryId = ref.read(selectedPantryProvider)!.id;
+    final selectedPantryItem = ref.read(selectedPantryItemProvider);
 
-    await ref.read(pantryItemControllerProvider.notifier).createPantryItem(
-          request: createPantryItemRequest,
-          pantryId: pantryId,
-        );
+    if (isEditing && selectedPantryItem != null) {
+      // If editing, call update method
+      await ref.read(pantryItemControllerProvider.notifier).updatePantryItem(
+            request: request,
+            itemId: selectedPantryItem.id,
+          );
+    } else {
+      // If creating new, call create method
+      final pantryId = ref.read(selectedPantryProvider)!.id;
+      await ref.read(pantryItemControllerProvider.notifier).createPantryItem(
+            request: request,
+            pantryId: pantryId,
+          );
+    }
   }
 
   @override
@@ -61,18 +88,20 @@ class _AddPantryItemPageState extends ConsumerState<AddPantryItemPage> {
     ref.listen(
       pantryItemControllerProvider,
       (prev, next) {
-        // TODO(Delight): handle the remaining states changes when it comes to those
-        if (next.isCreated) {
-          Navigator.pop(context);
+        if (next.isCreated || next.isUpdated) {
           ref.invalidate(getPantryItemsProvider);
+          if (isEditing) {
+            ref.read(selectedPantryItemProvider.notifier).state = null;
+          }
+          Navigator.pop(context);
         } else if (next.error != null) {
-          showCustomToast(message: 'Error creating the pantry item');
+          showCustomToast(message: isEditing ? 'Error updating the pantry item' : 'Error creating the pantry item');
         }
       },
     );
 
     return CustomScaffold(
-      title: 'Add Pantry Item',
+      title: isEditing ? 'Edit Pantry Item' : 'Add Pantry Item',
       body: SafeArea(
         child: ReactiveForm(
           formGroup: form,
@@ -188,9 +217,9 @@ class _AddPantryItemPageState extends ConsumerState<AddPantryItemPage> {
                     return AsyncButton(
                       width: double.infinity,
                       onPressed: form.valid ? _onSubmit : null,
-                      child: const Padding(
-                        padding: EdgeInsets.all(16),
-                        child: Text('Add Item'),
+                      child: Padding(
+                        padding: const EdgeInsets.all(16),
+                        child: Text(isEditing ? 'Update Item' : 'Add Item'),
                       ),
                     );
                   },

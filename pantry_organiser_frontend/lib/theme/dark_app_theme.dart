@@ -26,7 +26,7 @@ class DarkAppTheme {
   static const _bodyMedium = TextStyle(
     fontSize: 14,
     fontWeight: FontWeight.normal,
-    color: Colors.white70,
+    color: Colors.white,
   );
 
   static const _bodyLarge = TextStyle(

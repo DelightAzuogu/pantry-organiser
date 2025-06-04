@@ -366,3 +366,4 @@ FodyWeavers.xsd
 
 # Rider auto-generated files
 .idea/
+.hgignore

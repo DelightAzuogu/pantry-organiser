@@ -31,6 +31,21 @@ class PantryItemApi {
     throw Exception('Failed to get pantry items');
   }
 
+  Future<PantryItem> getPantryItem(String itemId) async {
+    try {
+      final response = await _apiService.get('$_pantryUrl/item/$itemId');
+
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body) as Map<String, dynamic>;
+        return PantryItem.fromJson(data);
+      }
+    } catch (e) {
+      rethrow;
+    }
+
+    throw Exception('Failed to get pantry item');
+  }
+
   Future<void> createPantryItem({
     required CreatePantryItemRequest request,
     required String pantryId,
@@ -49,5 +64,25 @@ class PantryItemApi {
     }
 
     throw Exception('Failed to create pantry item');
+  }
+
+  Future<void> updatePantryItem({
+    required String itemId,
+    required CreatePantryItemRequest request,
+  }) async {
+    try {
+      final response = await _apiService.post(
+        '$_pantryUrl/item/$itemId/update',
+        body: request.toJsonEncoded(),
+      );
+
+      if (response.statusCode == 200) {
+        return;
+      }
+    } catch (e) {
+      rethrow;
+    }
+
+    throw Exception('Failed to update pantry item');
   }
 }

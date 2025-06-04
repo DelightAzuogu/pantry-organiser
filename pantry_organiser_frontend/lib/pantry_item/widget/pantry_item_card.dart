@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gap/gap.dart';
 import 'package:pantry_organiser_frontend/api/api.dart';
 import 'package:pantry_organiser_frontend/helpers/helpers.dart';
+import 'package:pantry_organiser_frontend/pantry_item/pantry_item.dart';
 
-class PantryItemCard extends StatelessWidget {
+class PantryItemCard extends ConsumerWidget {
   const PantryItemCard({
     required this.item,
     super.key,
@@ -12,7 +14,7 @@ class PantryItemCard extends StatelessWidget {
   final PantryItem item;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final expiryColor = _getExpiryColor(item.expiryDate);
     final expiryText = item.expiryDate != null ? DateHelper.formatRelativeDate(item.expiryDate!) : 'No expiry date';
 
@@ -27,7 +29,8 @@ class PantryItemCard extends StatelessWidget {
       child: InkWell(
         borderRadius: BorderRadius.circular(16),
         onTap: () {
-          // TODO(Delight): Implement navigation to item details page
+          ref.read(selectedPantryItemProvider.notifier).state = item;
+          Navigator.pushNamed(context, '/addPantryItem');
         },
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -85,9 +88,7 @@ class PantryItemCard extends StatelessWidget {
                               const Gap(4),
                               Text(
                                 item.brand!,
-                                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                      color: Colors.grey[600],
-                                    ),
+                                style: Theme.of(context).textTheme.bodyMedium,
                               ),
                             ],
                           ],
@@ -115,7 +116,6 @@ class PantryItemCard extends StatelessWidget {
                       item.description!,
                       maxLines: 2,
                       style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                            color: Colors.grey[600],
                             overflow: TextOverflow.ellipsis,
                           ),
                     ),

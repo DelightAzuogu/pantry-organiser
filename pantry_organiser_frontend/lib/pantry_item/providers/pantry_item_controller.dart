@@ -35,4 +35,22 @@ class PantryItemControllerNotifier extends StateNotifier<PantryItemState> {
       state = PantryItemState(error: e.toString());
     }
   }
+
+  Future<void> updatePantryItem({
+    required CreatePantryItemRequest request,
+    required String itemId,
+  }) async {
+    try {
+      state = PantryItemState.loading();
+
+      await pantryItemApi.updatePantryItem(
+        itemId: itemId,
+        request: request,
+      );
+
+      state = PantryItemState.updated();
+    } catch (e) {
+      state = PantryItemState(error: e.toString());
+    }
+  }
 }
