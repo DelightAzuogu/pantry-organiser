@@ -49,4 +49,18 @@ class PantryApi {
 
     throw Exception('Failed to create pantry');
   }
+
+  Future<void> deletePantry(String pantryId) async {
+    try {
+      final response = await _apiService.post('$_pantryUrl/$pantryId/delete');
+
+      if (response.statusCode == 200) {
+        return;
+      }
+    } catch (e) {
+      rethrow;
+    }
+
+    throw Exception('Failed to delete pantry');
+  }
 }

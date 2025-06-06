@@ -88,20 +88,36 @@ class _AddPantryItemPageState extends ConsumerState<AddPantryItemPage> {
     ref.listen(
       pantryItemControllerProvider,
       (prev, next) {
-        if (next.isCreated || next.isUpdated) {
+        if (next.isCreated || next.isUpdated || next.isDeleted) {
           ref.invalidate(getPantryItemsProvider);
           if (isEditing) {
             ref.read(selectedPantryItemProvider.notifier).state = null;
           }
           Navigator.pop(context);
         } else if (next.error != null) {
-          showCustomToast(message: isEditing ? 'Error updating the pantry item' : 'Error creating the pantry item');
+          showCustomToast(message: 'An error occurred');
         }
       },
     );
 
     return CustomScaffold(
       title: isEditing ? 'Edit Pantry Item' : 'Add Pantry Item',
+      actions: [
+        if (isEditing)
+          IconButton(
+            icon: const Icon(Icons.delete),
+            onPressed: () async {
+              final pantryItem = ref.read(selectedPantryItemProvider)!;
+              await ref
+                  .read(
+                    pantryItemControllerProvider.notifier,
+                  )
+                  .deletePantryItem(
+                    pantryItem.id,
+                  );
+            },
+          ),
+      ],
       body: SafeArea(
         child: ReactiveForm(
           formGroup: form,

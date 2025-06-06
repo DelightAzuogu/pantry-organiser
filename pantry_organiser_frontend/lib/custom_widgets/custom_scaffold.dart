@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:gap/gap.dart';
 import 'package:pantry_organiser_frontend/custom_widgets/custom_drawer.dart';
 
 class CustomScaffold extends StatelessWidget {
@@ -17,21 +18,38 @@ class CustomScaffold extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final canPop = Navigator.canPop(context);
+
     return Scaffold(
       appBar: AppBar(
-        leading: Navigator.canPop(context)
-            ? IconButton(
+        automaticallyImplyLeading: false,
+        actions: actions,
+        title: Row(
+          children: [
+            if (canPop)
+              IconButton(
                 icon: const Icon(Icons.arrow_back),
                 onPressed: () => Navigator.pop(context),
               )
-            : null,
-        title: Text(title),
-        actions: actions,
+            else
+              Builder(
+                builder: (context) => IconButton(
+                  icon: const Icon(Icons.menu),
+                  onPressed: () => Scaffold.of(context).openDrawer(),
+                ),
+              ),
+            const Gap(10),
+            Expanded(
+              child: Text(
+                title,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+          ],
+        ),
       ),
-      endDrawer: const CustomDrawer(),
-      body: SafeArea(
-        child: body,
-      ),
+      drawer: const CustomDrawer(),
+      body: SafeArea(child: body),
       floatingActionButton: floatingActionButton,
     );
   }

@@ -85,4 +85,18 @@ class PantryItemApi {
 
     throw Exception('Failed to update pantry item');
   }
+
+  Future<void> deletePantryItem(String itemId) async {
+    try {
+      final response = await _apiService.post('$_pantryUrl/item/$itemId/delete');
+
+      if (response.statusCode == 200) {
+        return;
+      }
+    } catch (e) {
+      rethrow;
+    }
+
+    throw Exception('Failed to delete pantry item');
+  }
 }
