@@ -29,6 +29,7 @@ dependencies:
   shimmer: ^3.0.0
   http_interceptor: ^2.0.0
   device_preview_plus: ^2.2.6
+  font_awesome_flutter: ^10.8.0
 
 dev_dependencies:
   flutter_test:

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:pantry_organiser_frontend/auth/auth.dart';
 import 'package:pantry_organiser_frontend/helpers/custom_toast.dart';
 
@@ -8,16 +9,19 @@ class CustomDrawer extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    ref.listen(authenticationControllerProvider, (_, next) {
-      next.maybeWhen(
-        unAuthenticated: () {
-          Navigator.of(context).pushReplacementNamed('/login');
-        },
-        orElse: () {
-          showCustomToast(message: 'Failed to log out up 🚩');
-        },
-      );
-    });
+    ref.listen(
+      authenticationControllerProvider,
+      (_, next) {
+        next.maybeWhen(
+          unAuthenticated: () {
+            Navigator.of(context).pushReplacementNamed('/login');
+          },
+          orElse: () {
+            showCustomToast(message: 'Failed to log out up 🚩');
+          },
+        );
+      },
+    );
 
     final authController = ref.watch(authenticationControllerProvider.notifier);
 
@@ -40,7 +44,9 @@ class CustomDrawer extends ConsumerWidget {
                   child: Center(
                     child: Text(
                       'Pantry Organiser',
-                      style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                      style: Theme.of(
+                        context,
+                      ).textTheme.headlineSmall?.copyWith(
                             color: Theme.of(context).colorScheme.onPrimary,
                           ),
                     ),
@@ -73,7 +79,28 @@ class CustomDrawer extends ConsumerWidget {
                             ),
                           ),
                         ),
-                        // Add more card-style buttons here
+                        Card(
+                          elevation: 2,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: ListTile(
+                            leading: Icon(
+                              FontAwesomeIcons.utensils,
+                              color: Theme.of(context).colorScheme.primary,
+                            ),
+                            title: Text(
+                              'Recipes',
+                              style: Theme.of(context).textTheme.titleMedium,
+                            ),
+                            onTap: () {
+                              Navigator.pushReplacementNamed(context, '/recipes');
+                            },
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                          ),
+                        ),
                       ],
                     ),
                   ),
@@ -99,7 +126,9 @@ class CustomDrawer extends ConsumerWidget {
                       ),
                       title: Text(
                         'Logout',
-                        style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                        style: Theme.of(
+                          context,
+                        ).textTheme.titleMedium?.copyWith(
                               color: Colors.red,
                             ),
                       ),
