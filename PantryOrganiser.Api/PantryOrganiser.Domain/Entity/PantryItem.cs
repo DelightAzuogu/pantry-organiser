@@ -20,6 +20,4 @@ public class PantryItem: BaseEntity
     public virtual Pantry Pantry { get; set; }
     
     public virtual List<ShoppingBasketItem> ShoppingBasketItems { get; set; }
-    
-    public virtual List<RecipeIngredient> RecipeIngredients { get; set; }
 }

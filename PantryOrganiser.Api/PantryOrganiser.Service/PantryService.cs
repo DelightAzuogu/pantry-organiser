@@ -74,7 +74,7 @@ public class PantryService(
 
         logger.LogInformation("Deleting pantry with id {PantryId}", pantryId);
         await pantryRepository.DeletePantryAsync(pantryId);
-
+        
         logger.LogInformation("Deleting pantry items with pantry id {PantryId}", pantryId);
         await pantryItemRepository.DeletePantryItemsByPantryIdAsync(pantryId);
     }

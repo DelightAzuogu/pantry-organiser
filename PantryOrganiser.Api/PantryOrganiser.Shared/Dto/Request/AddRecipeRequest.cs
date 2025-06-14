@@ -13,4 +13,6 @@ public class AddRecipeRequest
     public string PrepTimeString { get; set; }
     
     public string CookTimeString { get; set; }
+    
+    public List<AddRecipeIngredientRequest> Ingredients { get; set; } = new List<AddRecipeIngredientRequest>();
 }

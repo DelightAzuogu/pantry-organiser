@@ -9,9 +9,14 @@ public class PantryItemRepository(AppDbContext dbContext) : BaseRepository<Pantr
 {
     public async Task DeletePantryItemsByPantryIdAsync(Guid pantryId)
     {
-        var items = await Query(x => x.PantryId == pantryId).ToListAsync();
-
-        await DeleteRangeAsync(items);
+        var items = Query(x => x.PantryId == pantryId).Count();
+        
+        if (items == 0)
+        {
+            return;
+        }
+        
+        await DeleteRangeAsync(Query(x => x.PantryId == pantryId));
     }
 
     public Task AddPantryItemAsync(PantryItem pantryItem) => AddAsync(pantryItem);

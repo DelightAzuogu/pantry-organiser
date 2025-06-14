@@ -33,6 +33,18 @@ public class RecipeService(
 
         await recipeRepository.AddRecipeAsync(recipe);
 
+        logger.LogInformation("Creating recipe ingredients for recipe with id {RecipeId}", recipe.Id);
+        foreach (var ingredient in request.Ingredients)
+        {
+            await recipeIngredientRepository.AddRecipeIngredientAsync(new RecipeIngredient
+            {
+                RecipeId = recipe.Id,
+                Name = ingredient.Name,
+                Quantity = ingredient.Quantity,
+                QuantityUnit = ingredient.QuantityUnit
+            });
+        }
+
         logger.LogInformation("Creating recipe user with recipe id {RecipeId} and user id {UserId}", recipe.Id, userId);
         var recipeUser = new RecipeUser
         {
@@ -79,8 +91,6 @@ public class RecipeService(
             throw new UnauthorizedAccessException("User is not authorized to view this recipe");
         }
 
-        var recipeIngredients = await recipeIngredientRepository.GetRecipeIngredientsByRecipeIdAsync(recipeId);
-
         return new RecipeDetailsResponse
         {
             Id = recipe.Id,
@@ -90,16 +100,28 @@ public class RecipeService(
             CookTime = recipe.CookTime,
             Instructions = recipe.Instructions,
             ServingSize = recipe.ServingSize,
-            Ingredients = recipeIngredients.Select(x => new RecipeIngredientResponse
-            {
-                Id = x.Id,
-                Name = x.PantryItem.Name,
-                Quantity = x.PantryItem.Quantity,
-                QuantityUnit = x.PantryItem.QuantityUnit,
-                RecipeQuantity = x.Quantity
-            }).ToList(),
             IsOwner = recipeUser.IsOwner
         };
+    }
+
+    public async Task<List<RecipeIngredientResponse>> GetRecipeIngredientsByRecipeIdAsync(Guid recipeId)
+    {
+        logger.LogInformation("validating id {RecipeId}", recipeId);
+        if (!await recipeRepository.RecipeWithIdExistsAsync(recipeId))
+        {
+            logger.LogError("Recipe with id {RecipeId} not found", recipeId);
+            throw new RecipeNotFoundException("Recipe not found");
+        }
+        
+        logger.LogInformation("Getting recipe ingredients for recipe with id {RecipeId}", recipeId);
+        var ingredients = await recipeIngredientRepository.GetRecipeIngredientsByRecipeIdAsync(recipeId);
+
+        return ingredients.Select(x => new RecipeIngredientResponse
+        {
+            Name = x.Name,
+            Quantity = x.Quantity,
+            QuantityUnit = x.QuantityUnit
+        }).ToList();
     }
 
     public async Task UpdateRecipeAsync(Guid recipeId, AddRecipeRequest request, Guid userId)
@@ -143,6 +165,68 @@ public class RecipeService(
             throw new UnauthorizedAccessException("User is not authorized to delete this recipe");
         }
 
+        logger.LogInformation("Deleting recipe: {recipeId}", recipeId);
         await recipeRepository.DeleteRecipeAsync(recipeId);
+
+        logger.LogInformation("Deleting recipe ingredients for recipe with id {RecipeId}", recipeId);
+        await recipeIngredientRepository.DeleteRecipeIngredientsByRecipeIdAsync(recipeId);
+    }
+
+    public async Task UpdateRecipeIngredientAsync(UpdateRecipeIngredientRequest request, Guid userId)
+    {
+        logger.LogInformation("Getting ingredient with id {IngredientId} for recipe with id {RecipeId}", request.IngredientId, request.RecipeId);
+
+        var ingredient = await recipeIngredientRepository.GetIngredientById(request.IngredientId);
+
+        if (ingredient is null)
+        {
+            logger.LogError("Ingredient: {ingredientId} not found ", request.IngredientId);
+            throw new IngredientNotFoundException("Ingredient not found ");
+        }
+
+        logger.LogInformation("Checking user recipe status for recipe with id {RecipeId} and user with id {UserId}", request.RecipeId, userId);
+
+        var recipeUser = await recipeUserRepository.GetRecipeUserByRecipeIdAndUserIdAsync(ingredient.RecipeId, userId);
+
+        if (recipeUser is not { IsOwner: true })
+        {
+            logger.LogError("User with id {UserId} is not authorized to update recipe with id {RecipeId}", userId, ingredient.RecipeId);
+            throw new UnauthorizedAccessException("User is not authorized to update this recipe ingredient");
+        }
+
+        logger.LogInformation("Updating recipe ingredient with id {IngredientId} for recipe with id {RecipeId}", request.IngredientId, request.RecipeId);
+
+        ingredient.Name = request.Name;
+        ingredient.Quantity = request.Quantity;
+        ingredient.QuantityUnit = request.QuantityUnit;
+
+        await recipeIngredientRepository.UpdateIngredientAsync(ingredient);
+    }
+
+    public async Task DeleteRecipeIngredientAsync(Guid ingredientId, Guid userId)
+    {
+        logger.LogInformation("Getting ingredient with id {IngredientId}", ingredientId);
+
+        var ingredient = await recipeIngredientRepository.GetIngredientById(ingredientId);
+
+        if (ingredient is null)
+        {
+            logger.LogError("Ingredient: {ingredientId} not found ", ingredientId);
+            throw new IngredientNotFoundException("Ingredient not found ");
+        }
+
+        logger.LogInformation("Checking user recipe status for recipe with id {RecipeId} and user with id {UserId}", ingredient.RecipeId, userId);
+
+        var recipeUser = await recipeUserRepository.GetRecipeUserByRecipeIdAndUserIdAsync(ingredient.RecipeId, userId);
+
+        if (recipeUser is not { IsOwner: true })
+        {
+            logger.LogError("User with id {UserId} is not authorized to delete recipe ingredient with id {IngredientId}", userId, ingredient.Id);
+            throw new UnauthorizedAccessException("User is not authorized to delete this recipe ingredient");
+        }
+
+        logger.LogInformation("Deleting recipe ingredient with id {IngredientId} for recipe with id {RecipeId}", ingredient.Id, ingredient.RecipeId);
+
+        await recipeIngredientRepository.DeleteIngredientAsync(ingredient);
     }
 }

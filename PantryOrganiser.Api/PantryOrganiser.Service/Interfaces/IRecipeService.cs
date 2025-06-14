@@ -10,4 +10,7 @@ public interface IRecipeService
     Task<List<RecipeResponse>> GetRecipesByUserIdAsync(Guid userId);
     Task UpdateRecipeAsync(Guid recipeId, AddRecipeRequest request, Guid userId);
     Task DeleteRecipeAsync(Guid recipeId, Guid userId);
+    Task<List<RecipeIngredientResponse>> GetRecipeIngredientsByRecipeIdAsync(Guid recipeId);
+    Task UpdateRecipeIngredientAsync(UpdateRecipeIngredientRequest request, Guid userId);
+    Task DeleteRecipeIngredientAsync(Guid ingredientId, Guid userId);
 }

@@ -16,6 +16,4 @@ public class RecipeDetailsResponse
     public TimeSpan CookTime { get; set; }
     
     public bool IsOwner { get; set; }
-    
-    public List<RecipeIngredientResponse> Ingredients { get; set; }
 }
