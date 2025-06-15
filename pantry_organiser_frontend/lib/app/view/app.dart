@@ -4,7 +4,7 @@ import 'package:pantry_organiser_frontend/auth/auth.dart';
 import 'package:pantry_organiser_frontend/home/home.dart';
 import 'package:pantry_organiser_frontend/l10n/l10n.dart';
 import 'package:pantry_organiser_frontend/pantry_item/pantry_item.dart';
-import 'package:pantry_organiser_frontend/recipe/views/user_recipes.dart';
+import 'package:pantry_organiser_frontend/recipe/views/views.dart';
 import 'package:pantry_organiser_frontend/theme/theme.dart';
 
 class App extends ConsumerWidget {
@@ -26,6 +26,7 @@ class App extends ConsumerWidget {
         '/pantryItems': (context) => const PantryItemsPage(),
         '/addPantryItem': (context) => const AddPantryItemPage(),
         '/recipes': (context) => const UserRecipes(),
+        '/createRecipe': (context) => const CreateRecipe(),
       },
       initialRoute: authState.when(
         unAuthenticated: () => '/login',

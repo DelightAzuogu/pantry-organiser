@@ -62,12 +62,6 @@ class _UserRecipesState extends ConsumerState<UserRecipes> {
           errorMessage = next.errorMessage;
         });
         showCustomToast(message: next.errorMessage!);
-      } else if (next.successMessage != null) {
-        setState(() {
-          isLoading = false;
-          errorMessage = null;
-        });
-        showCustomToast(message: next.successMessage!);
       }
 
       if (true == next.hasGottenRecipes) {
@@ -82,6 +76,13 @@ class _UserRecipesState extends ConsumerState<UserRecipes> {
     return CustomScaffold(
       title: 'Recipes',
       body: _buildBody(theme),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.pushNamed(context, '/createRecipe');
+        },
+        backgroundColor: Theme.of(context).colorScheme.primary,
+        child: const Icon(Icons.add),
+      ),
     );
   }
 

@@ -17,8 +17,8 @@ class AddRecipeRequest {
   final String? description;
   final String? instructions;
   final int servingSize;
-  final DateTime prepTime;
-  final DateTime cookTime;
+  final Duration prepTime;
+  final Duration cookTime;
   final List<AddRecipeIngredientRequest> ingredients;
 
   Map<String, dynamic> toJson() {
@@ -27,8 +27,8 @@ class AddRecipeRequest {
       'description': description,
       'instructions': instructions,
       'servingSize': servingSize,
-      'prepTimeString': prepTime.toIso8601String(),
-      'cookTimeString': cookTime.toIso8601String(),
+      'prepTimeString': prepTime.toString(),
+      'cookTimeString': cookTime.toString(),
       'ingredients': ingredients.map((e) => e.toJson()).toList(),
     };
   }
