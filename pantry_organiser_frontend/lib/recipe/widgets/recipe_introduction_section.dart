@@ -8,7 +8,8 @@ class RecipeInstructionsSection extends StatelessWidget {
   Widget build(BuildContext context) {
     return ReactiveTextField<String>(
       formControlName: 'instructions',
-      maxLines: 6,
+      minLines: 5,
+      maxLines: null,
       decoration: const InputDecoration(
         labelText: 'Instructions',
         border: OutlineInputBorder(),
