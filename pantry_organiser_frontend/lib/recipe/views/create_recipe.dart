@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pantry_organiser_frontend/api/api.dart';
 import 'package:pantry_organiser_frontend/custom_widgets/custom_widgets.dart';
@@ -15,6 +14,7 @@ class CreateRecipe extends ConsumerStatefulWidget {
 
 class _CreateRecipeState extends ConsumerState<CreateRecipe> {
   late FormGroup form;
+  List<AddRecipeIngredientRequest> ingredients = [];
 
   @override
   void initState() {
@@ -81,8 +81,7 @@ class _CreateRecipeState extends ConsumerState<CreateRecipe> {
           hours: formValue['cookHours'] as int? ?? 0,
           minutes: formValue['cookMinutes'] as int? ?? 0,
         ),
-        // TODO(Delight): Add ingredients handling
-        ingredients: [],
+        ingredients: ingredients,
       );
 
       ref.read(userRecipesControllerProvider.notifier).createRecipe(request);
@@ -91,57 +90,22 @@ class _CreateRecipeState extends ConsumerState<CreateRecipe> {
     }
   }
 
-  Widget _buildTimeInputRow(
-    String label,
-    String hoursControlName,
-    String minutesControlName,
-  ) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          label,
-          style: Theme.of(context).textTheme.titleMedium,
-        ),
-        const SizedBox(height: 8),
-        Row(
-          children: [
-            Expanded(
-              child: ReactiveTextField<int>(
-                formControlName: hoursControlName,
-                keyboardType: TextInputType.number,
-                inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                decoration: const InputDecoration(
-                  labelText: 'Hours',
-                  border: OutlineInputBorder(),
-                  hintText: '0',
-                ),
-                validationMessages: {
-                  ValidationMessage.min: (error) => 'Hours must be 0 or greater',
-                },
-              ),
-            ),
-            const SizedBox(width: 16),
-            Expanded(
-              child: ReactiveTextField<int>(
-                formControlName: minutesControlName,
-                keyboardType: TextInputType.number,
-                inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                decoration: const InputDecoration(
-                  labelText: 'Minutes',
-                  border: OutlineInputBorder(),
-                  hintText: '0',
-                ),
-                validationMessages: {
-                  ValidationMessage.min: (error) => 'Minutes must be 0 or greater',
-                  ValidationMessage.max: (error) => 'Minutes must be less than 60',
-                },
-              ),
-            ),
-          ],
-        ),
-      ],
-    );
+  void _addIngredient(AddRecipeIngredientRequest ingredient) {
+    setState(() {
+      ingredients.add(ingredient);
+    });
+  }
+
+  void _updateIngredient(int index, AddRecipeIngredientRequest ingredient) {
+    setState(() {
+      ingredients[index] = ingredient;
+    });
+  }
+
+  void _removeIngredient(int index) {
+    setState(() {
+      ingredients.removeAt(index);
+    });
   }
 
   @override
@@ -161,81 +125,19 @@ class _CreateRecipeState extends ConsumerState<CreateRecipe> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              // Recipe Name
-              ReactiveTextField<String>(
-                formControlName: 'name',
-                decoration: const InputDecoration(
-                  labelText: 'Recipe Name *',
-                  border: OutlineInputBorder(),
-                  hintText: 'Enter recipe name',
-                ),
-                validationMessages: {
-                  ValidationMessage.required: (error) => 'Recipe name is required',
-                },
-              ),
-              const SizedBox(height: 16),
-
-              // Description
-              ReactiveTextField<String>(
-                formControlName: 'description',
-                maxLines: 3,
-                decoration: const InputDecoration(
-                  labelText: 'Description',
-                  border: OutlineInputBorder(),
-                  hintText: 'Enter recipe description (optional)',
-                  alignLabelWithHint: true,
-                ),
-              ),
-              const SizedBox(height: 16),
-
-              // Serving Size
-              ReactiveTextField<int>(
-                formControlName: 'servingSize',
-                keyboardType: TextInputType.number,
-                inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                decoration: const InputDecoration(
-                  labelText: 'Serving Size *',
-                  border: OutlineInputBorder(),
-                  hintText: 'Number of servings',
-                  suffixText: 'servings',
-                ),
-                validationMessages: {
-                  ValidationMessage.required: (error) => 'Serving size is required',
-                  ValidationMessage.min: (error) => 'Serving size must be at least 1',
-                },
+              const RecipeBasicInfoSection(),
+              const SizedBox(height: 24),
+              const RecipeTimeInputSection(),
+              const SizedBox(height: 24),
+              RecipeIngredientsSection(
+                ingredients: ingredients,
+                onAddIngredient: _addIngredient,
+                onUpdateIngredient: _updateIngredient,
+                onRemoveIngredient: _removeIngredient,
               ),
               const SizedBox(height: 24),
-
-              // Prep Time
-              _buildTimeInputRow(
-                'Prep Time',
-                'prepHours',
-                'prepMinutes',
-              ),
-              const SizedBox(height: 24),
-
-              // Cook Time
-              _buildTimeInputRow(
-                'Cook Time',
-                'cookHours',
-                'cookMinutes',
-              ),
-              const SizedBox(height: 16),
-
-              // Instructions
-              ReactiveTextField<String>(
-                formControlName: 'instructions',
-                maxLines: 6,
-                decoration: const InputDecoration(
-                  labelText: 'Instructions',
-                  border: OutlineInputBorder(),
-                  hintText: 'Enter cooking instructions (optional)',
-                  alignLabelWithHint: true,
-                ),
-              ),
+              const RecipeInstructionsSection(),
               const SizedBox(height: 32),
-
-              // Submit Button
               ReactiveFormConsumer(
                 builder: (context, form, child) {
                   return ElevatedButton(

@@ -4,9 +4,9 @@ public class AddRecipeRequest
 {
     public string Name { get; set; }
     
-    public string Description { get; set; }
+    public string? Description { get; set; }
     
-    public string Instructions { get; set; }
+    public string? Instructions { get; set; }
     
     public int ServingSize { get; set; }
     
@@ -14,5 +14,5 @@ public class AddRecipeRequest
     
     public string CookTimeString { get; set; }
     
-    public List<AddRecipeIngredientRequest> Ingredients { get; set; } = new List<AddRecipeIngredientRequest>();
+    public List<AddRecipeIngredientRequest> Ingredients { get; set; }
 }

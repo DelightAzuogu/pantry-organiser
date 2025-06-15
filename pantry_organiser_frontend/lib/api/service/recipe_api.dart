@@ -14,9 +14,11 @@ class RecipeApi {
     required AddRecipeRequest request,
   }) async {
     try {
+      final requestBody = request.toJsonEncoded();
+
       final response = await _apiService.post(
         '$_recipeUrl/create',
-        body: request.toJsonEncoded(),
+        body: requestBody,
       );
 
       if (response.statusCode == 201 || response.statusCode == 200) {
