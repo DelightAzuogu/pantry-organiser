@@ -120,41 +120,51 @@ class _CreateRecipeState extends ConsumerState<CreateRecipe> {
       title: 'Create Recipe',
       body: ReactiveForm(
         formGroup: form,
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              const RecipeBasicInfoSection(),
-              const SizedBox(height: 24),
-              const RecipeTimeInputSection(),
-              const SizedBox(height: 24),
-              RecipeIngredientsSection(
-                ingredients: ingredients,
-                onAddIngredient: _addIngredient,
-                onUpdateIngredient: _updateIngredient,
-                onRemoveIngredient: _removeIngredient,
-              ),
-              const SizedBox(height: 24),
-              const RecipeInstructionsSection(),
-              const SizedBox(height: 32),
-              ReactiveFormConsumer(
-                builder: (context, form, child) {
-                  return ElevatedButton(
-                    onPressed: form.valid ? _submitForm : null,
-                    style: ElevatedButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(vertical: 16),
+        child: Column(
+          children: [
+            Expanded(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    const RecipeBasicInfoSection(),
+                    const SizedBox(height: 24),
+                    const RecipeTimeInputSection(),
+                    const SizedBox(height: 24),
+                    RecipeIngredientsSection(
+                      ingredients: ingredients,
+                      onAddIngredient: _addIngredient,
+                      onUpdateIngredient: _updateIngredient,
+                      onRemoveIngredient: _removeIngredient,
                     ),
-                    child: const Text(
-                      'Create Recipe',
-                      style: TextStyle(fontSize: 16),
-                    ),
-                  );
-                },
+                    const SizedBox(height: 24),
+                    const RecipeInstructionsSection(),
+                  ],
+                ),
               ),
-              const SizedBox(height: 16),
-            ],
-          ),
+            ),
+            ReactiveFormConsumer(
+              builder: (context, form, child) {
+                return Padding(
+                  padding: const EdgeInsets.all(8),
+                  child: SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton(
+                      onPressed: form.valid ? _submitForm : null,
+                      style: ElevatedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(vertical: 16),
+                      ),
+                      child: const Text(
+                        'Create Recipe',
+                        style: TextStyle(fontSize: 16),
+                      ),
+                    ),
+                  ),
+                );
+              },
+            ),
+          ],
         ),
       ),
     );
