@@ -23,7 +23,14 @@ public class RecipeRepository(AppDbContext dbContext) : BaseRepository<Recipe>(d
                 PrepTime = x.PrepTime,
                 CookTime = x.CookTime,
                 Instructions = x.Instructions,
-                ServingSize = x.ServingSize
+                ServingSize = x.ServingSize,
+                RecipeIngredients = x.RecipeIngredients.Select(ri => new RecipeIngredient
+                {
+                    Id = ri.Id,
+                    Name = ri.Name,
+                    Quantity = ri.Quantity,
+                    QuantityUnit = ri.QuantityUnit
+                }).ToList()
             })
             .FirstOrDefaultAsync();
 

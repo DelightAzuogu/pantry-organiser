@@ -100,7 +100,14 @@ public class RecipeService(
             CookTime = recipe.CookTime,
             Instructions = recipe.Instructions,
             ServingSize = recipe.ServingSize,
-            IsOwner = recipeUser.IsOwner
+            IsOwner = recipeUser.IsOwner,
+            Ingredients = recipe.RecipeIngredients.Select(x => new RecipeIngredientResponse
+            {
+                Id = x.Id,
+                Name = x.Name,
+                Quantity = x.Quantity,
+                QuantityUnit = x.QuantityUnit
+            }).ToList()
         };
     }
 
@@ -112,7 +119,7 @@ public class RecipeService(
             logger.LogError("Recipe with id {RecipeId} not found", recipeId);
             throw new RecipeNotFoundException("Recipe not found");
         }
-        
+
         logger.LogInformation("Getting recipe ingredients for recipe with id {RecipeId}", recipeId);
         var ingredients = await recipeIngredientRepository.GetRecipeIngredientsByRecipeIdAsync(recipeId);
 

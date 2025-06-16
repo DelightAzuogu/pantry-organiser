@@ -24,24 +24,21 @@ class _UserRecipesState extends ConsumerState<UserRecipes> {
     errorMessage = null;
     recipes = [];
 
-    // ✅ Proper place for initial load:
     WidgetsBinding.instance.addPostFrameCallback((_) {
       ref.read(userRecipesControllerProvider.notifier).getRecipes();
     });
   }
 
   void _onRefresh() {
-    ref
-        .read(
-          userRecipesControllerProvider.notifier,
-        )
-        .getRecipes();
+    ref.read(userRecipesControllerProvider.notifier).getRecipes();
   }
 
   void _onRecipeTap(RecipesModel recipe) {
+    ref.read(selectedRecipeIdProvider.notifier).state = recipe.id;
+
     Navigator.pushNamed(
       context,
-      '/recipe-details',
+      '/recipeDetails',
       arguments: recipe,
     );
   }
@@ -80,7 +77,7 @@ class _UserRecipesState extends ConsumerState<UserRecipes> {
         onPressed: () {
           Navigator.pushNamed(context, '/createRecipe');
         },
-        backgroundColor: Theme.of(context).colorScheme.primary,
+        backgroundColor: theme.colorScheme.primary,
         child: const Icon(Icons.add),
       ),
     );
@@ -185,25 +182,13 @@ class _UserRecipesState extends ConsumerState<UserRecipes> {
               ),
               const SizedBox(width: 16),
               Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      recipe.name,
-                      style: theme.textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.w600,
-                      ),
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      'Recipe ID: ${recipe.id}',
-                      style: theme.textTheme.bodySmall?.copyWith(
-                        color: theme.colorScheme.onSurface.withOpacity(0.6),
-                      ),
-                    ),
-                  ],
+                child: Text(
+                  recipe.name,
+                  style: theme.textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.w600,
+                  ),
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
                 ),
               ),
               Icon(

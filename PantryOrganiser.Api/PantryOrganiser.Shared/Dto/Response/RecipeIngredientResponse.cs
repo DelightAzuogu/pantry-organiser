@@ -13,6 +13,4 @@ public class RecipeIngredientResponse
 
     [JsonConverter(typeof(JsonStringEnumConverter))]
     public QuantityUnit QuantityUnit { get; set; }
-
-    public double RecipeQuantity { get; set; }
 }
