@@ -43,7 +43,7 @@ class UserRecipesController extends StateNotifier<UserRecipeControllerState> {
 
       await getRecipes(isCreated: true);
     } catch (e) {
-      state = const UserRecipeControllerState.error('Failed to create recipe');
+      await showCustomToast(message: 'Failed to create recipe');
     }
   }
 
@@ -57,7 +57,7 @@ class UserRecipesController extends StateNotifier<UserRecipeControllerState> {
 
       await getRecipes(isDeleted: true);
     } catch (e) {
-      state = const UserRecipeControllerState.error('Failed to delete recipe');
+      await showCustomToast(message: 'Failed to delete recipe');
     }
   }
 }

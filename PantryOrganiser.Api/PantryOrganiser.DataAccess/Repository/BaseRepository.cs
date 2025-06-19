@@ -131,7 +131,7 @@ public class BaseRepository<TEntity>(AppDbContext dbContext) : IBaseRepository<T
     {
         if (entities == null) throw new ArgumentNullException(nameof(entities), "Entities collection cannot be null when deleting range.");
 
-        if (!entities.Any()) throw new ArgumentException("Entities collection cannot be empty when deleting range.", nameof(entities));
+        // if (!entities.Any()) throw new ArgumentException("Entities collection cannot be empty when deleting range.", nameof(entities));
 
         try
         {
