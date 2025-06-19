@@ -68,4 +68,20 @@ class RecipeApi {
 
     throw Exception('Failed to fetch recipe details');
   }
+
+  Future<void> deleteRecipe(String recipeId) async {
+    try {
+      final response = await _apiService.post(
+        '$_recipeUrl/$recipeId/delete',
+      );
+
+      if (response.statusCode == 200 || response.statusCode == 204) {
+        return;
+      }
+    } catch (e) {
+      rethrow;
+    }
+
+    throw Exception('Failed to delete recipe');
+  }
 }

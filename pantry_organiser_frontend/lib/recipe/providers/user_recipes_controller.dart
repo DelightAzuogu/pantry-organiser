@@ -18,7 +18,7 @@ class UserRecipesController extends StateNotifier<UserRecipeControllerState> {
 
   final RecipeApi recipeApi;
 
-  Future<void> getRecipes({bool? isCreated}) async {
+  Future<void> getRecipes({bool? isCreated, bool? isDeleted}) async {
     state = const UserRecipeControllerState.loading();
 
     try {
@@ -26,6 +26,7 @@ class UserRecipesController extends StateNotifier<UserRecipeControllerState> {
       state = UserRecipeControllerState.success(
         recipes,
         isCreated: isCreated ?? false,
+        isDeleted: isDeleted ?? false,
       );
     } catch (e) {
       state = const UserRecipeControllerState.error('Failed to fetch recipes');
@@ -43,6 +44,20 @@ class UserRecipesController extends StateNotifier<UserRecipeControllerState> {
       await getRecipes(isCreated: true);
     } catch (e) {
       state = const UserRecipeControllerState.error('Failed to create recipe');
+    }
+  }
+
+  Future<void> deleteRecipe(String recipeId) async {
+    try {
+      await recipeApi.deleteRecipe(recipeId);
+
+      await showCustomToast(
+        message: 'Recipe deleted successfully',
+      );
+
+      await getRecipes(isDeleted: true);
+    } catch (e) {
+      state = const UserRecipeControllerState.error('Failed to delete recipe');
     }
   }
 }

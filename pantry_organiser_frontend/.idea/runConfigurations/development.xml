@@ -1,8 +1,0 @@
-<component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="development" type="FlutterRunConfigurationType" factoryName="Flutter">
-    <option name="additionalArgs" value="--dart-define BASEURL=https://dlln3t6z-7265.euw.devtunnels.ms/api --verbose" />
-    <option name="buildFlavor" value="development" />
-    <option name="filePath" value="$PROJECT_DIR$/lib/main_development.dart" />
-    <method v="2" />
-  </configuration>
-</component>

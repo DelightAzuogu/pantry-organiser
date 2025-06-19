@@ -8,6 +8,7 @@ class UserRecipeControllerState extends Equatable {
     this.errorMessage,
     this.hasGottenRecipes = false,
     this.isCreated = false,
+    this.isDeleted = false,
   });
 
   /// Named constructor for loading state
@@ -29,12 +30,14 @@ class UserRecipeControllerState extends Equatable {
   const UserRecipeControllerState.success(
     List<RecipesModel> recipes, {
     bool? isCreated,
+    bool? isDeleted,
   }) : this(
           recipes: recipes,
           isLoading: false,
           errorMessage: null,
           hasGottenRecipes: true,
           isCreated: isCreated ?? false,
+          isDeleted: isDeleted ?? false,
         );
 
   final String? errorMessage;
@@ -42,17 +45,24 @@ class UserRecipeControllerState extends Equatable {
   final bool isLoading;
   final List<RecipesModel> recipes;
   final bool isCreated;
+  final bool isDeleted;
 
   UserRecipeControllerState copyWith({
     String? errorMessage,
     String? successMessage,
     bool? isLoading,
     List<RecipesModel>? recipes,
+    bool? hasGottenRecipes,
+    bool? isCreated,
+    bool? isDeleted,
   }) {
     return UserRecipeControllerState(
       errorMessage: errorMessage ?? this.errorMessage,
       isLoading: isLoading ?? this.isLoading,
       recipes: recipes ?? this.recipes,
+      hasGottenRecipes: hasGottenRecipes ?? this.hasGottenRecipes,
+      isCreated: isCreated ?? this.isCreated,
+      isDeleted: isDeleted ?? this.isDeleted,
     );
   }
 

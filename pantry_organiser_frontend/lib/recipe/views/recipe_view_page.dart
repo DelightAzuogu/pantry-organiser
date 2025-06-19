@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pantry_organiser_frontend/custom_widgets/custom_widgets.dart';
+import 'package:pantry_organiser_frontend/helpers/custom_toast.dart';
 import 'package:pantry_organiser_frontend/recipe/recipe.dart';
 
 class RecipeViewPage extends ConsumerStatefulWidget {
@@ -21,44 +22,33 @@ class _RecipeViewPageState extends ConsumerState<RecipeViewPage> {
       context: context,
       builder: (context) => AlertDialog(
         title: const Text('Delete Recipe'),
-        content: const Text('Are you sure you want to delete this recipe? This action cannot be undone.'),
+        content: const Text(
+          'Are you sure you want to delete this recipe? This action cannot be undone.',
+        ),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
             child: const Text('Cancel'),
           ),
-          TextButton(
-            onPressed: () {
+          AsyncButton(
+            onPressed: () async {
+              await ref
+                  .read(
+                    userRecipesControllerProvider.notifier,
+                  )
+                  .deleteRecipe(
+                    ref.read(selectedRecipeIdProvider)!,
+                  );
               Navigator.of(context).pop();
-              _deleteRecipe();
             },
-            style: TextButton.styleFrom(foregroundColor: Colors.red),
-            child: const Text('Delete'),
+            child: const Padding(
+              padding: EdgeInsets.all(16),
+              child: Text('Delete'),
+            ),
           ),
         ],
       ),
     );
-  }
-
-  Future<void> _deleteRecipe() async {
-    try {
-      final recipeId = ref.read(selectedRecipeIdProvider)!;
-      // TODO: Implement delete recipe logic
-      // await ref.read(deleteRecipeProvider(recipeId: recipeId).future);
-
-      if (mounted) {
-        Navigator.of(context).pop(); // Go back to previous screen
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Recipe deleted successfully')),
-        );
-      }
-    } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Failed to delete recipe: $e')),
-        );
-      }
-    }
   }
 
   String _formatDuration(Duration duration) {
@@ -74,6 +64,13 @@ class _RecipeViewPageState extends ConsumerState<RecipeViewPage> {
 
   @override
   Widget build(BuildContext context) {
+    ref.listen(userRecipesControllerProvider, (_, next) {
+      if (next.isDeleted) {
+        showCustomToast(message: 'Successfully deleted the recipe');
+        Navigator.of(context).pop();
+      }
+    });
+
     final recipeId = ref.watch(selectedRecipeIdProvider)!;
     final asyncValue = ref.watch(getRecipeDetailsProvider(recipeId: recipeId));
 
@@ -85,14 +82,14 @@ class _RecipeViewPageState extends ConsumerState<RecipeViewPage> {
             onRefresh: _refreshRecipeDetails,
             child: SingleChildScrollView(
               physics: const AlwaysScrollableScrollPhysics(),
-              padding: const EdgeInsets.all(16.0),
+              padding: const EdgeInsets.all(16),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   // Recipe Header
                   Card(
                     child: Padding(
-                      padding: const EdgeInsets.all(16.0),
+                      padding: const EdgeInsets.all(16),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -102,7 +99,9 @@ class _RecipeViewPageState extends ConsumerState<RecipeViewPage> {
                               Expanded(
                                 child: Text(
                                   recipeDetails.name,
-                                  style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                                  style: Theme.of(
+                                    context,
+                                  ).textTheme.headlineSmall?.copyWith(
                                         fontWeight: FontWeight.bold,
                                       ),
                                 ),
@@ -138,7 +137,9 @@ class _RecipeViewPageState extends ConsumerState<RecipeViewPage> {
                                 child: _InfoCard(
                                   icon: Icons.schedule,
                                   label: 'Prep Time',
-                                  value: _formatDuration(recipeDetails.prepTime),
+                                  value: _formatDuration(
+                                    recipeDetails.prepTime,
+                                  ),
                                 ),
                               ),
                               const SizedBox(width: 8),
@@ -146,7 +147,9 @@ class _RecipeViewPageState extends ConsumerState<RecipeViewPage> {
                                 child: _InfoCard(
                                   icon: Icons.timer,
                                   label: 'Cook Time',
-                                  value: _formatDuration(recipeDetails.cookTime),
+                                  value: _formatDuration(
+                                    recipeDetails.cookTime,
+                                  ),
                                 ),
                               ),
                             ],
@@ -160,7 +163,7 @@ class _RecipeViewPageState extends ConsumerState<RecipeViewPage> {
                   // Ingredients Section
                   Card(
                     child: Padding(
-                      padding: const EdgeInsets.all(16.0),
+                      padding: const EdgeInsets.all(16),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -173,7 +176,9 @@ class _RecipeViewPageState extends ConsumerState<RecipeViewPage> {
                               const SizedBox(width: 8),
                               Text(
                                 'Ingredients',
-                                style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                                style: Theme.of(
+                                  context,
+                                ).textTheme.titleLarge?.copyWith(
                                       fontWeight: FontWeight.bold,
                                     ),
                               ),
@@ -195,7 +200,9 @@ class _RecipeViewPageState extends ConsumerState<RecipeViewPage> {
                                 return ListTile(
                                   contentPadding: EdgeInsets.zero,
                                   leading: CircleAvatar(
-                                    backgroundColor: Theme.of(context).primaryColor.withOpacity(0.1),
+                                    backgroundColor: Theme.of(
+                                      context,
+                                    ).primaryColor.withOpacity(0.1),
                                     child: Text(
                                       ingredient.name[0].toUpperCase(),
                                       style: TextStyle(
@@ -206,11 +213,15 @@ class _RecipeViewPageState extends ConsumerState<RecipeViewPage> {
                                   ),
                                   title: Text(
                                     ingredient.name,
-                                    style: const TextStyle(fontWeight: FontWeight.w500),
+                                    style: const TextStyle(
+                                      fontWeight: FontWeight.w500,
+                                    ),
                                   ),
                                   trailing: Text(
                                     '${ingredient.quantity} ${ingredient.quantityUnit.name}',
-                                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                    style: Theme.of(
+                                      context,
+                                    ).textTheme.bodyMedium?.copyWith(
                                           fontWeight: FontWeight.w500,
                                           color: Theme.of(context).primaryColor,
                                         ),
@@ -227,7 +238,7 @@ class _RecipeViewPageState extends ConsumerState<RecipeViewPage> {
                   // Instructions Section
                   Card(
                     child: Padding(
-                      padding: const EdgeInsets.all(16.0),
+                      padding: const EdgeInsets.all(16),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -281,15 +292,15 @@ class _RecipeViewPageState extends ConsumerState<RecipeViewPage> {
 }
 
 class _InfoCard extends StatelessWidget {
-  final IconData icon;
-  final String label;
-  final String value;
-
   const _InfoCard({
     required this.icon,
     required this.label,
     required this.value,
   });
+
+  final IconData icon;
+  final String label;
+  final String value;
 
   @override
   Widget build(BuildContext context) {
