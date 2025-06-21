@@ -6,7 +6,12 @@ import 'package:pantry_organiser_frontend/recipe/recipe.dart';
 import 'package:reactive_forms/reactive_forms.dart';
 
 class CreateRecipe extends ConsumerStatefulWidget {
-  const CreateRecipe({super.key});
+  const CreateRecipe({
+    this.isEditing = false,
+    super.key,
+  });
+
+  final bool isEditing;
 
   @override
   ConsumerState createState() => _CreateRecipeState();
@@ -15,45 +20,68 @@ class CreateRecipe extends ConsumerStatefulWidget {
 class _CreateRecipeState extends ConsumerState<CreateRecipe> {
   late FormGroup form;
   List<AddRecipeIngredientRequest> ingredients = [];
+  bool _isInitialized = false;
 
   @override
   void initState() {
     super.initState();
+    _initializeForm();
+  }
+
+  void _initializeForm([RecipeDetailsModel? recipe]) {
     form = FormGroup({
       'name': FormControl<String>(
+        value: recipe?.name,
         validators: [Validators.required],
       ),
-      'description': FormControl<String>(),
-      'instructions': FormControl<String>(),
+      'description': FormControl<String>(
+        value: recipe?.description,
+      ),
+      'instructions': FormControl<String>(
+        value: recipe?.instructions,
+      ),
       'servingSize': FormControl<int>(
+        value: recipe?.servingSize,
         validators: [
           Validators.required,
           Validators.min(1),
         ],
       ),
       'prepHours': FormControl<int>(
-        value: 0,
+        value: recipe?.prepTime.inHours ?? 0,
         validators: [Validators.min(0)],
       ),
       'prepMinutes': FormControl<int>(
-        value: 0,
+        value: recipe != null ? (recipe.prepTime.inMinutes) % 60 : 0,
         validators: [
           Validators.min(0),
           Validators.max(59),
         ],
       ),
       'cookHours': FormControl<int>(
-        value: 0,
+        value: recipe?.cookTime.inHours ?? 0,
         validators: [Validators.min(0)],
       ),
       'cookMinutes': FormControl<int>(
-        value: 0,
+        value: recipe != null ? (recipe.cookTime.inMinutes) % 60 : 0,
         validators: [
           Validators.min(0),
           Validators.max(59),
         ],
       ),
     });
+
+    // Initialize ingredients if editing
+    if (recipe != null) {
+      ingredients = recipe.ingredients.map((ingredient) {
+        return AddRecipeIngredientRequest(
+          name: ingredient.name,
+          quantity: ingredient.quantity,
+          quantityUnit: ingredient.quantityUnit,
+          recipeId: recipe.id,
+        );
+      }).toList();
+    }
   }
 
   @override
@@ -66,25 +94,49 @@ class _CreateRecipeState extends ConsumerState<CreateRecipe> {
     if (form.valid) {
       final formValue = form.value;
 
-      final request = AddRecipeRequest(
-        name: formValue['name']! as String,
-        description:
-            true == (formValue['description'] as String?)?.isNotEmpty ? formValue['description'] as String? : null,
-        instructions:
-            true == (formValue['instructions'] as String?)?.isNotEmpty ? formValue['instructions'] as String? : null,
-        servingSize: formValue['servingSize']! as int,
-        prepTime: Duration(
-          hours: formValue['prepHours'] as int? ?? 0,
-          minutes: formValue['prepMinutes'] as int? ?? 0,
-        ),
-        cookTime: Duration(
-          hours: formValue['cookHours'] as int? ?? 0,
-          minutes: formValue['cookMinutes'] as int? ?? 0,
-        ),
-        ingredients: ingredients,
-      );
+      if (widget.isEditing) {
+        final selectedRecipe = ref.read(selectedRecipeProvider);
+        if (selectedRecipe != null) {
+          final updateRequest = AddRecipeRequest(
+            name: formValue['name']! as String,
+            description: true == (formValue['description'] as String?)?.isNotEmpty ? formValue['description'] as String? : null,
+            instructions: true == (formValue['instructions'] as String?)?.isNotEmpty ? formValue['instructions'] as String? : null,
+            servingSize: formValue['servingSize']! as int,
+            prepTime: Duration(
+              hours: formValue['prepHours'] as int? ?? 0,
+              minutes: formValue['prepMinutes'] as int? ?? 0,
+            ),
+            cookTime: Duration(
+              hours: formValue['cookHours'] as int? ?? 0,
+              minutes: formValue['cookMinutes'] as int? ?? 0,
+            ),
+            ingredients: ingredients,
+          );
 
-      ref.read(userRecipesControllerProvider.notifier).createRecipe(request);
+          ref.read(userRecipesControllerProvider.notifier).updateRecipe(
+                updateRequest,
+                selectedRecipe.id,
+              );
+        }
+      } else {
+        final request = AddRecipeRequest(
+          name: formValue['name']! as String,
+          description: true == (formValue['description'] as String?)?.isNotEmpty ? formValue['description'] as String? : null,
+          instructions: true == (formValue['instructions'] as String?)?.isNotEmpty ? formValue['instructions'] as String? : null,
+          servingSize: formValue['servingSize']! as int,
+          prepTime: Duration(
+            hours: formValue['prepHours'] as int? ?? 0,
+            minutes: formValue['prepMinutes'] as int? ?? 0,
+          ),
+          cookTime: Duration(
+            hours: formValue['cookHours'] as int? ?? 0,
+            minutes: formValue['cookMinutes'] as int? ?? 0,
+          ),
+          ingredients: ingredients,
+        );
+
+        ref.read(userRecipesControllerProvider.notifier).createRecipe(request);
+      }
     } else {
       form.markAllAsTouched();
     }
@@ -110,14 +162,28 @@ class _CreateRecipeState extends ConsumerState<CreateRecipe> {
 
   @override
   Widget build(BuildContext context) {
+    final selectedRecipe = ref.watch(selectedRecipeProvider);
+
+    // Initialize form with recipe data when editing
+    if (widget.isEditing && selectedRecipe != null && !_isInitialized) {
+      _initializeForm(selectedRecipe);
+      _isInitialized = true;
+    }
+
     ref.listen(userRecipesControllerProvider, (_, next) {
-      if (true == next.isCreated) {
-        Navigator.of(context).pop();
+      if (widget.isEditing) {
+        if (true == next.isUpdated) {
+          Navigator.of(context).pop();
+        }
+      } else {
+        if (true == next.isCreated) {
+          Navigator.of(context).pop();
+        }
       }
     });
 
     return CustomScaffold(
-      title: 'Create Recipe',
+      title: widget.isEditing ? 'Edit Recipe' : 'Create Recipe',
       body: ReactiveForm(
         formGroup: form,
         child: Column(
@@ -155,9 +221,9 @@ class _CreateRecipeState extends ConsumerState<CreateRecipe> {
                       style: ElevatedButton.styleFrom(
                         padding: const EdgeInsets.symmetric(vertical: 16),
                       ),
-                      child: const Text(
-                        'Create Recipe',
-                        style: TextStyle(fontSize: 16),
+                      child: Text(
+                        widget.isEditing ? 'Update Recipe' : 'Create Recipe',
+                        style: const TextStyle(fontSize: 16),
                       ),
                     ),
                   ),

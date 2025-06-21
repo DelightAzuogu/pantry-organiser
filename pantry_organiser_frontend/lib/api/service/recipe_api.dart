@@ -84,4 +84,26 @@ class RecipeApi {
 
     throw Exception('Failed to delete recipe');
   }
+
+  Future<void> updateRecipe({
+    required String recipeId,
+    required AddRecipeRequest request,
+  }) async {
+    try {
+      final requestBody = request.toJsonEncoded();
+
+      final response = await _apiService.post(
+        '$_recipeUrl/$recipeId/update',
+        body: requestBody,
+      );
+
+      if (response.statusCode == 200 || response.statusCode == 204) {
+        return;
+      }
+    } catch (e) {
+      rethrow;
+    }
+
+    throw Exception('Failed to update recipe');
+  }
 }

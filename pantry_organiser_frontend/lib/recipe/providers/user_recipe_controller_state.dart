@@ -9,6 +9,7 @@ class UserRecipeControllerState extends Equatable {
     this.hasGottenRecipes = false,
     this.isCreated = false,
     this.isDeleted = false,
+    this.isUpdated = false,
   });
 
   /// Named constructor for loading state
@@ -31,6 +32,7 @@ class UserRecipeControllerState extends Equatable {
     List<RecipesModel> recipes, {
     bool? isCreated,
     bool? isDeleted,
+    bool? isUpdated,
   }) : this(
           recipes: recipes,
           isLoading: false,
@@ -38,6 +40,7 @@ class UserRecipeControllerState extends Equatable {
           hasGottenRecipes: true,
           isCreated: isCreated ?? false,
           isDeleted: isDeleted ?? false,
+          isUpdated: isUpdated ?? false,
         );
 
   final String? errorMessage;
@@ -46,6 +49,7 @@ class UserRecipeControllerState extends Equatable {
   final List<RecipesModel> recipes;
   final bool isCreated;
   final bool isDeleted;
+  final bool isUpdated;
 
   UserRecipeControllerState copyWith({
     String? errorMessage,

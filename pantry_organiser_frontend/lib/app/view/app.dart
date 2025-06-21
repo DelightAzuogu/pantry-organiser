@@ -28,6 +28,7 @@ class App extends ConsumerWidget {
         '/recipes': (context) => const UserRecipes(),
         '/createRecipe': (context) => const CreateRecipe(),
         '/recipeDetails': (context) => const RecipeViewPage(),
+        '/editRecipe': (context) => const CreateRecipe(isEditing: true),
       },
       initialRoute: authState.when(
         unAuthenticated: () => '/login',

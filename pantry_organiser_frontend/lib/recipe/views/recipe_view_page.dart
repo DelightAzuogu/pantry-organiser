@@ -99,20 +99,35 @@ class _RecipeViewPageState extends ConsumerState<RecipeViewPage> {
                               Expanded(
                                 child: Text(
                                   recipeDetails.name,
-                                  style: Theme.of(
-                                    context,
-                                  ).textTheme.headlineSmall?.copyWith(
+                                  softWrap: true,
+                                  overflow: TextOverflow.visible,
+                                  style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                                         fontWeight: FontWeight.bold,
                                       ),
                                 ),
                               ),
-                              if (recipeDetails.isOwner)
+                              if (recipeDetails.isOwner) ...[
+                                IconButton(
+                                  onPressed: () {
+                                    ref
+                                        .read(
+                                          selectedRecipeProvider.notifier,
+                                        )
+                                        .state = recipeDetails;
+                                    Navigator.of(context).pushNamed(
+                                      '/editRecipe',
+                                    );
+                                  },
+                                  icon: const Icon(Icons.edit),
+                                  tooltip: 'Edit Recipe',
+                                ),
                                 IconButton(
                                   onPressed: () => _showDeleteDialog(context),
                                   icon: const Icon(Icons.delete),
                                   color: Colors.red,
                                   tooltip: 'Delete Recipe',
                                 ),
+                              ],
                             ],
                           ),
                           const SizedBox(height: 8),
