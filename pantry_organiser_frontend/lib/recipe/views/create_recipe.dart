@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pantry_organiser_frontend/api/api.dart';
 import 'package:pantry_organiser_frontend/custom_widgets/custom_widgets.dart';
+import 'package:pantry_organiser_frontend/helpers/helpers.dart';
 import 'package:pantry_organiser_frontend/recipe/recipe.dart';
 import 'package:reactive_forms/reactive_forms.dart';
 
@@ -75,6 +76,7 @@ class _CreateRecipeState extends ConsumerState<CreateRecipe> {
     if (recipe != null) {
       ingredients = recipe.ingredients.map((ingredient) {
         return AddRecipeIngredientRequest(
+          id: ingredient.id,
           name: ingredient.name,
           quantity: ingredient.quantity,
           quantityUnit: ingredient.quantityUnit,
@@ -90,7 +92,7 @@ class _CreateRecipeState extends ConsumerState<CreateRecipe> {
     super.dispose();
   }
 
-  void _submitForm() {
+  Future<void> _submitForm() async {
     if (form.valid) {
       final formValue = form.value;
 
@@ -113,7 +115,7 @@ class _CreateRecipeState extends ConsumerState<CreateRecipe> {
             ingredients: ingredients,
           );
 
-          ref.read(userRecipesControllerProvider.notifier).updateRecipe(
+          await ref.read(userRecipesControllerProvider.notifier).updateRecipe(
                 updateRequest,
                 selectedRecipe.id,
               );
@@ -135,7 +137,13 @@ class _CreateRecipeState extends ConsumerState<CreateRecipe> {
           ingredients: ingredients,
         );
 
-        ref.read(userRecipesControllerProvider.notifier).createRecipe(request);
+        await ref
+            .read(
+              userRecipesControllerProvider.notifier,
+            )
+            .createRecipe(
+              request,
+            );
       }
     } else {
       form.markAllAsTouched();
@@ -170,13 +178,18 @@ class _CreateRecipeState extends ConsumerState<CreateRecipe> {
       _isInitialized = true;
     }
 
-    ref.listen(userRecipesControllerProvider, (_, next) {
+    ref.listen(userRecipesControllerProvider, (_, next) async {
       if (widget.isEditing) {
         if (true == next.isUpdated) {
+          ref.invalidate(getRecipeDetailsProvider);
+          await showCustomToast(message: 'Recipe updated successfully');
           Navigator.of(context).pop();
         }
       } else {
         if (true == next.isCreated) {
+          await showCustomToast(
+            message: 'Recipe created successfully',
+          );
           Navigator.of(context).pop();
         }
       }
@@ -216,11 +229,8 @@ class _CreateRecipeState extends ConsumerState<CreateRecipe> {
                   padding: const EdgeInsets.all(8),
                   child: SizedBox(
                     width: double.infinity,
-                    child: ElevatedButton(
+                    child: AsyncButton(
                       onPressed: form.valid ? _submitForm : null,
-                      style: ElevatedButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(vertical: 16),
-                      ),
                       child: Text(
                         widget.isEditing ? 'Update Recipe' : 'Create Recipe',
                         style: const TextStyle(fontSize: 16),

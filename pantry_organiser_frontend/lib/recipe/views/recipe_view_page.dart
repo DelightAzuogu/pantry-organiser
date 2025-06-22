@@ -13,8 +13,7 @@ class RecipeViewPage extends ConsumerStatefulWidget {
 
 class _RecipeViewPageState extends ConsumerState<RecipeViewPage> {
   Future<void> _refreshRecipeDetails() async {
-    final recipeId = ref.read(selectedRecipeIdProvider)!;
-    await ref.read(getRecipeDetailsProvider(recipeId: recipeId).future);
+    ref.invalidate(getRecipeDetailsProvider);
   }
 
   void _showDeleteDialog(BuildContext context) {

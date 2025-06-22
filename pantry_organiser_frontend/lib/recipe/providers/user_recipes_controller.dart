@@ -42,10 +42,6 @@ class UserRecipesController extends StateNotifier<UserRecipeControllerState> {
     try {
       await recipeApi.createRecipe(request: request);
 
-      await showCustomToast(
-        message: 'Recipe created successfully',
-      );
-
       await getRecipes(isCreated: true);
     } catch (e) {
       await showCustomToast(message: 'Failed to create recipe');
@@ -66,17 +62,19 @@ class UserRecipesController extends StateNotifier<UserRecipeControllerState> {
     }
   }
 
-  void updateRecipe(AddRecipeRequest updateRequest, String recipeId) {
+  Future<void> updateRecipe(
+    AddRecipeRequest updateRequest,
+    String recipeId,
+  ) async {
     try {
-      recipeApi.updateRecipe(
+      await recipeApi.updateRecipe(
         recipeId: recipeId,
         request: updateRequest,
       );
 
-      showCustomToast(message: 'Recipe updated successfully');
-      getRecipes(isUpdated: true);
+      await getRecipes(isUpdated: true);
     } catch (e) {
-      showCustomToast(message: 'Failed to update recipe');
+      await showCustomToast(message: 'Failed to update recipe');
     }
   }
 }

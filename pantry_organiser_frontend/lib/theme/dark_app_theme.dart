@@ -134,7 +134,7 @@ class DarkAppTheme {
   );
 
   // Card Theme
-  static final _cardTheme = CardTheme(
+  static final _cardTheme = CardThemeData(
     elevation: 8,
     shape: RoundedRectangleBorder(
       borderRadius: BorderRadius.circular(16),

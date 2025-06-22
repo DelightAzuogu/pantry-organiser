@@ -8,8 +8,10 @@ class AddRecipeIngredientRequest {
     required this.quantity,
     required this.quantityUnit,
     this.recipeId,
+    this.id,
   });
 
+  final String? id;
   final String? recipeId;
   final String name;
   final double quantity;
@@ -21,6 +23,7 @@ class AddRecipeIngredientRequest {
       'quantity': quantity,
       'quantityUnit': quantityUnit.name,
       'recipeId': recipeId,
+      'id': id,
     };
   }
 
