@@ -24,13 +24,14 @@ public class RecipeRepository(AppDbContext dbContext) : BaseRepository<Recipe>(d
                 CookTime = x.CookTime,
                 Instructions = x.Instructions,
                 ServingSize = x.ServingSize,
-                RecipeIngredients = x.RecipeIngredients.Select(ri => new RecipeIngredient
-                {
-                    Id = ri.Id,
-                    Name = ri.Name,
-                    Quantity = ri.Quantity,
-                    QuantityUnit = ri.QuantityUnit
-                }).ToList()
+                RecipeIngredients = x.RecipeIngredients.Where(ri => ri.DeletedAt == null)
+                    .Select(ri => new RecipeIngredient
+                    {
+                        Id = ri.Id,
+                        Name = ri.Name,
+                        Quantity = ri.Quantity,
+                        QuantityUnit = ri.QuantityUnit
+                    }).ToList()
             })
             .FirstOrDefaultAsync();
 

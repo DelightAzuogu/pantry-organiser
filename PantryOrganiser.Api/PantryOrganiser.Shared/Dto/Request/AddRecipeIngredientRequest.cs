@@ -5,6 +5,8 @@ namespace PantryOrganiser.Shared.Dto.Request;
 
 public class AddRecipeIngredientRequest
 {
+    public Guid? Id { get; set; }
+    
     public Guid? RecipeId { get; set; }
     
     public required string Name { get; set; }

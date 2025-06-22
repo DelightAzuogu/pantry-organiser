@@ -152,10 +152,10 @@ public class RecipeService(
 
         logger.LogInformation("Updating recipe with id {RecipeId}", recipeId);
         await recipeRepository.UpdateRecipeAsync(recipeId, request);
-        
+
         logger.LogInformation("Deleting existing recipe ingredients for recipe with id {RecipeId}", recipeId);
         await recipeIngredientRepository.DeleteRecipeIngredientsByRecipeIdAsync(recipeId);
-        
+
         logger.LogInformation("Creating recipe ingredients for recipe with id {RecipeId}", recipeId);
         foreach (var ingredient in request.Ingredients)
         {

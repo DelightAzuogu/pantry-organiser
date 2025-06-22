@@ -21,6 +21,5 @@ public class RecipeIngredientRepository(AppDbContext dbContext) : BaseRepository
     public Task<RecipeIngredient> GetIngredientById(Guid ingredientId) => Query(x => x.Id == ingredientId).SingleAsync();
 
     public Task UpdateIngredientAsync(RecipeIngredient ingredient) => UpdateAsync(ingredient);
-    public Task DeleteIngredientAsync(RecipeIngredient ingredient) => 
-        DeleteAsync(ingredient);
+    public Task DeleteIngredientAsync(RecipeIngredient ingredient) => DeleteAsync(ingredient);
 }
