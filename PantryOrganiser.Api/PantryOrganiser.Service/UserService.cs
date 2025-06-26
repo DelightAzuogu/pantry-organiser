@@ -93,20 +93,31 @@ public class UserService(ILogger<UserService> logger, IUserRepository userReposi
             throw new UserNotFoundException(ResponseMessages.UserNotFound);
         }
     }
-    
+
     public async Task<User> GetUserByEmailAsync(string email)
     {
-        await ValidateUserExistenceByEmailAsync(email);
-        
         logger.LogInformation("Getting user with email {email}.", email);
-        return await userRepository.GetUserByEmailAsync(email);
+        var user = await userRepository.GetUserByEmailAsync(email);
+
+        if (user is null)
+        {
+            logger.LogError($"User with email {email} not found.");
+            throw new UserNotFoundException(ResponseMessages.UserNotFound);
+        }
+
+        return user;
     }
-    
+
     public async Task<User> GetUserByIdAsync(Guid userId)
     {
-        await ValidateUserExistenceByIdAsync(userId);
-        
         logger.LogInformation("Getting user with id {Id}.", userId);
-        return await userRepository.GetUserByIdAsync(userId);
+        var user = await userRepository.GetUserByIdAsync(userId);
+        if (user is null)
+        {
+            logger.LogError($"User with id {userId} not found.");
+            throw new UserNotFoundException(ResponseMessages.UserNotFound);
+        }
+
+        return user;
     }
 }

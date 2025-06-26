@@ -252,4 +252,72 @@ public class RecipeService(
 
         await recipeIngredientRepository.DeleteIngredientAsync(ingredient);
     }
+
+    public async Task AddUserToRecipeAsync(AddUserToRecipeRequest request, Guid userId)
+    {
+        var newUser = await userService.GetUserByEmailAsync(request.Email);
+
+        if (!await recipeRepository.RecipeWithIdExistsAsync(request.RecipeId))
+        {
+            logger.LogError("Recipe with id {RecipeId} not found", request.RecipeId);
+            throw new RecipeNotFoundException("Recipe not found");
+        }
+
+        if (await recipeUserRepository.UserInRecipeAsync(request.RecipeId, newUser.Id))
+        {
+            logger.LogError("User with id {UserId} is already in recipe with id {RecipeId}", newUser.Id, request.RecipeId);
+            throw new InvalidOperationException("User is already in this recipe");
+        }
+
+        var recipeUser = await recipeUserRepository.GetRecipeUserByRecipeIdAndUserIdAsync(request.RecipeId, userId);
+
+        if (recipeUser is not { IsOwner: true })
+        {
+            logger.LogError("User with id {UserId} is not authorized to add users to recipe with id {RecipeId}", userId, request.RecipeId);
+            throw new UnauthorizedAccessException("User is not authorized to add users to this recipe");
+        }
+
+        var newRecipeUser = new RecipeUser
+        {
+            RecipeId = request.RecipeId,
+            UserId = newUser.Id,
+            IsOwner = false
+        };
+
+        await recipeUserRepository.AddRecipeUserAsync(newRecipeUser);
+    }
+
+    public async Task RemoveUserFromRecipeAsync(Guid recipeId, Guid userId, Guid userToRemoveId)
+    {
+        if (!await recipeRepository.RecipeWithIdExistsAsync(recipeId))
+        {
+            logger.LogError("Recipe with id {RecipeId} not found", recipeId);
+            throw new RecipeNotFoundException("Recipe not found");
+        }
+
+        var recipeUser = await recipeUserRepository.GetRecipeUserByRecipeIdAndUserIdAsync(recipeId, userId);
+
+        if (recipeUser is not { IsOwner: true })
+        {
+            logger.LogError("User with id {UserId} is not authorized to remove users from recipe with id {RecipeId}", userId, recipeId);
+            throw new UnauthorizedAccessException("User is not authorized to remove users from this recipe");
+        }
+
+
+        var userToRemoveRecipeUser = await recipeUserRepository.GetRecipeUserByRecipeIdAndUserIdAsync(recipeId, userToRemoveId);
+
+        if (userToRemoveRecipeUser is null)
+        {
+            logger.LogError("User with id {UserToRemoveId} is not in recipe with id {RecipeId}", userToRemoveId, recipeId);
+            throw new InvalidOperationException("User is not in this recipe");
+        }
+
+        if (userToRemoveRecipeUser.IsOwner && userToRemoveId == userId)
+        {
+            logger.LogError("User with id {UserToRemoveId} is the owner of recipe with id {RecipeId} and cannot be removed", userToRemoveId, recipeId);
+            throw new InvalidOperationException("Owner of the recipe cannot be removed");
+        }
+
+        await recipeUserRepository.DeleteUserFromRecipeAsync(userToRemoveRecipeUser);
+    }
 }
