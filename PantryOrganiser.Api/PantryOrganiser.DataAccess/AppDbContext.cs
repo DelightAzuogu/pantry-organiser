@@ -25,6 +25,8 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
     public DbSet<ShoppingBasket> ShoppingBaskets { get; set; }
 
     public DbSet<ShoppingBasketItem> ShoppingBasketItems { get; set; }
+    
+    public DbSet<ShoppingBasketUsers> ShoppingBasketUsers { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

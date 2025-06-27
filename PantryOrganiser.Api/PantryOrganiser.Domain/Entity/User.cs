@@ -10,4 +10,5 @@ public class User : BaseEntity
     public virtual List<PantryUser> PantryUsers { get; set; }
     
     public virtual List<RecipeUser> RecipeUsers { get; set; }
+    public virtual  List<ShoppingBasketUsers> ShoppingBasketUsers { get; set; }
 }

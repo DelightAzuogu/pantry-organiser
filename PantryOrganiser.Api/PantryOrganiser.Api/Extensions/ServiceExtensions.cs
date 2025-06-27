@@ -145,6 +145,7 @@ public static class ServiceExtensions
         services.AddScoped<IRecipeRepository, RecipeRepository>();
         services.AddScoped<IRecipeIngredientRepository, RecipeIngredientRepository>();
         services.AddScoped<IRecipeUserRepository, RecipeUserRepository>();
+        services.AddScoped<IShoppingBasketUserRepository, ShoppingBasketUserRepository>();
 
         services.AddScoped<IAsyncInitializer, Initializer>();
     }

@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PantryOrganiser.DataAccess;
 
@@ -11,9 +12,11 @@ using PantryOrganiser.DataAccess;
 namespace PantryOrganiser.DataAccess.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250626005539_RemoveShoppingItemAndPantryItemRelationship")]
+    partial class RemoveShoppingItemAndPantryItemRelationship
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -286,9 +289,6 @@ namespace PantryOrganiser.DataAccess.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("UniqueString")
-                        .HasColumnType("nvarchar(450)");
-
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime2");
 
@@ -296,10 +296,6 @@ namespace PantryOrganiser.DataAccess.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("UniqueString")
-                        .IsUnique()
-                        .HasFilter("[UniqueString] IS NOT NULL");
 
                     b.HasIndex("UserId");
 
@@ -318,9 +314,6 @@ namespace PantryOrganiser.DataAccess.Migrations
                     b.Property<DateTime?>("DeletedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<bool>("IsChecked")
-                        .HasColumnType("bit");
-
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
@@ -328,10 +321,6 @@ namespace PantryOrganiser.DataAccess.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasDefaultValue(0);
-
-                    b.Property<string>("QuantityUnit")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<Guid>("ShoppingBasketId")
                         .HasColumnType("uniqueidentifier");
@@ -344,42 +333,6 @@ namespace PantryOrganiser.DataAccess.Migrations
                     b.HasIndex("ShoppingBasketId");
 
                     b.ToTable("ShoppingBasketItems");
-                });
-
-            modelBuilder.Entity("PantryOrganiser.Domain.Entity.ShoppingBasketUsers", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime?>("DeletedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<bool>("IsOwner")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(false);
-
-                    b.Property<Guid>("ShoppingBasketId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime>("UpdatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ShoppingBasketId");
-
-                    b.HasIndex("UserId", "ShoppingBasketId")
-                        .IsUnique();
-
-                    b.ToTable("ShoppingBasketUsers");
                 });
 
             modelBuilder.Entity("PantryOrganiser.Domain.Entity.User", b =>
@@ -505,25 +458,6 @@ namespace PantryOrganiser.DataAccess.Migrations
                     b.Navigation("ShoppingBasket");
                 });
 
-            modelBuilder.Entity("PantryOrganiser.Domain.Entity.ShoppingBasketUsers", b =>
-                {
-                    b.HasOne("PantryOrganiser.Domain.Entity.ShoppingBasket", "ShoppingBasket")
-                        .WithMany("ShoppingBasketUsers")
-                        .HasForeignKey("ShoppingBasketId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("PantryOrganiser.Domain.Entity.User", "User")
-                        .WithMany("ShoppingBasketUsers")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("ShoppingBasket");
-
-                    b.Navigation("User");
-                });
-
             modelBuilder.Entity("PantryOrganiser.Domain.Entity.Pantry", b =>
                 {
                     b.Navigation("PantryItems");
@@ -546,8 +480,6 @@ namespace PantryOrganiser.DataAccess.Migrations
             modelBuilder.Entity("PantryOrganiser.Domain.Entity.ShoppingBasket", b =>
                 {
                     b.Navigation("ShoppingBasketItems");
-
-                    b.Navigation("ShoppingBasketUsers");
                 });
 
             modelBuilder.Entity("PantryOrganiser.Domain.Entity.User", b =>
@@ -555,8 +487,6 @@ namespace PantryOrganiser.DataAccess.Migrations
                     b.Navigation("PantryUsers");
 
                     b.Navigation("RecipeUsers");
-
-                    b.Navigation("ShoppingBasketUsers");
 
                     b.Navigation("ShoppingBaskets");
                 });

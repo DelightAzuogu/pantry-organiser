@@ -17,13 +17,10 @@ public class ShoppingBasketItemConfiguration : IEntityTypeConfiguration<Shopping
             .WithMany(x => x.ShoppingBasketItems)
             .HasForeignKey(x => x.ShoppingBasketId)
             .OnDelete(DeleteBehavior.Restrict);
-
-        builder.HasOne(x => x.PantryItem)
-            .WithMany(x => x.ShoppingBasketItems)
-            .HasForeignKey(x => x.PantryItemId)
-            .OnDelete(DeleteBehavior.Restrict);
+        
+        builder.Property(x=> x.QuantityUnit)
+            .HasConversion<string>();
 
         builder.HasIndex(x => x.ShoppingBasketId);
-        builder.HasIndex(x => x.PantryItemId);
     }
 }
