@@ -11,7 +11,8 @@ public class ShoppingBasketService(
     ILogger<ShoppingBasketService> logger,
     IUserContext userContext,
     IShoppingBasketUserRepository shoppingBasketUserRepository,
-    IShoppingBasketRepository shoppingBasketRepository
+    IShoppingBasketRepository shoppingBasketRepository,
+    IUserService userService
 ) : IShoppingBasketService
 {
     public async Task CreateShoppingBasketAsync(string name)
@@ -98,7 +99,7 @@ public class ShoppingBasketService(
             IsClosed = basket.IsClosed
         }).ToList();
     }
-    
+
     public async Task<List<GetShoppingBasketResponse>> GetAllClosedShoppingBasketsAsync()
     {
         logger.LogInformation($"Getting all closed shopping baskets for user with ID: {userContext.UserId}");
@@ -179,8 +180,10 @@ public class ShoppingBasketService(
     {
         logger.LogInformation($"Adding user with ID {userId} to shopping basket with ID {basketId}");
 
-        var isBasketExists = await shoppingBasketRepository.DoesBasketWithIdExist(basketId);
+        logger.LogInformation("Checking if user is really exists.");
+        await userService.ValidateUserExistenceByIdAsync(userId);
 
+        var isBasketExists = await shoppingBasketRepository.DoesBasketWithIdExist(basketId);
         if (!isBasketExists)
         {
             logger.LogError($"Shopping basket with ID {basketId} does not exist.");
@@ -231,7 +234,7 @@ public class ShoppingBasketService(
             IsOwner = false
         };
     }
-    
+
     public async Task CloseShoppingBasketAsync(Guid id)
     {
         logger.LogInformation($"Closing shopping basket with ID: {id}");
