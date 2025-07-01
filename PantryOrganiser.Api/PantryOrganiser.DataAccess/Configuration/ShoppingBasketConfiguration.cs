@@ -13,13 +13,6 @@ public class ShoppingBasketConfiguration : IEntityTypeConfiguration<ShoppingBask
         builder.Property(x => x.Name)
             .IsRequired();
 
-        builder.HasOne(x => x.User)
-            .WithMany(x => x.ShoppingBaskets)
-            .HasForeignKey(x => x.UserId)
-            .OnDelete(DeleteBehavior.Restrict);
-        
-        builder.HasIndex(x => x.UserId);
-
         builder.HasIndex(x => x.UniqueString)
             .IsUnique();
     }

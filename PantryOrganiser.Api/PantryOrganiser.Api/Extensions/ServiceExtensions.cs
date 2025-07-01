@@ -146,6 +146,7 @@ public static class ServiceExtensions
         services.AddScoped<IRecipeIngredientRepository, RecipeIngredientRepository>();
         services.AddScoped<IRecipeUserRepository, RecipeUserRepository>();
         services.AddScoped<IShoppingBasketUserRepository, ShoppingBasketUserRepository>();
+        
 
         services.AddScoped<IAsyncInitializer, Initializer>();
     }
@@ -159,6 +160,9 @@ public static class ServiceExtensions
         services.AddScoped<IRecipeService, RecipeService>();
         services.AddScoped<IRecipeUserService, RecipeUserService>();
         services.AddScoped<IRecipeIngredientService, RecipeIngredientService>();
+        services.AddScoped<IShoppingBasketService, ShoppingBasketService>();
+        services.AddScoped<IShoppingBasketItemService, ShoppingBasketItemService>();
+        services.AddScoped<IShoppingBasketUserService, ShoppingBasketUserService>();
 
         services.AddSingleton<IJwtHelper, JwtHelper>();
         services.AddSingleton<IHashHelper, HashHelper>();

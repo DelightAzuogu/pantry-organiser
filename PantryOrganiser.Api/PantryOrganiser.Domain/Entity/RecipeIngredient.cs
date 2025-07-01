@@ -1,4 +1,5 @@
-﻿using PantryOrganiser.Shared.Enum;
+﻿using System.Text.Json.Serialization;
+using PantryOrganiser.Shared.Enum;
 
 namespace PantryOrganiser.Domain.Entity;
 
@@ -11,5 +12,6 @@ public class RecipeIngredient : BaseEntity
     
     public double Quantity { get; set; }
     
+    [JsonConverter(typeof(JsonStringEnumConverter))] 
     public QuantityUnit QuantityUnit { get; set; }
 }
