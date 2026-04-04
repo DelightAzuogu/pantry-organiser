@@ -50,7 +50,7 @@ public static class ServiceExtensions
         services.AddAuthentication(protocols);
 
         // Add CORS
-        services.AddCors();
+        services.AddCors(protocols);
 
         // Add User Context
         services.AddUserContext();
@@ -213,13 +213,14 @@ public static class ServiceExtensions
         });
     }
 
-    private static void AddCors(this IServiceCollection services)
+    private static void AddCors(this IServiceCollection services, WebProtocolSettings protocols)
     {
         services.AddCors(options =>
         {
             options.AddPolicy(CorsPolicy.AllowSitesFromAppSettings, x =>
             {
-                x.AllowAnyOrigin()
+                x.WithOrigins(protocols.CorsUrls.ToArray())
+                    .SetIsOriginAllowedToAllowWildcardSubdomains()
                     .AllowAnyHeader()
                     .AllowAnyMethod();
             });
