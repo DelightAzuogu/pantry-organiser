@@ -38,7 +38,7 @@ public static class ServiceExtensions
 
         // Add Database
         services.AddDbContext<AppDbContext>(options =>
-            options.UseSqlServer(configuration.GetConnectionString("ApplicationDbContext")));
+            options.UseNpgsql(configuration.GetConnectionString("ApplicationDbContext")));
 
         // Add Repositories
         services.AddRepositories();
